@@ -9,7 +9,6 @@ let menu_children = Array.from(menu.children)
 const socket = io()
 
 let self_id;
-
 let current_room = "general"
 
 const params = new URLSearchParams(window.location.search)
@@ -297,3 +296,7 @@ function set_info_room_users(users) {
         room_users_e.appendChild(new_div)
     })
 }
+
+socket.on("room-settings-remove-room", (room_name) => {
+
+}) 
