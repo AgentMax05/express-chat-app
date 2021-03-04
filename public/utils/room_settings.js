@@ -104,3 +104,15 @@ function remove_children(element) {
         element.removeChild(element.firstChild)
     }
 }
+
+socket.on("room-settings-remove-room-user", (username) => {
+    console.log("should remove user")
+    let users_container = document.querySelector("#right_bar_users")
+    let users_list = Array.from(users_container.querySelectorAll(".room_user"))
+    for (let i = 0; i < users_list.length; i++) {
+        if (users_list[i].innerText === username) {
+            users_container.removeChild(users_list[i])
+            return
+        }
+    }
+})

@@ -210,11 +210,21 @@ io.on("connection", function(socket) {
     })
 
     socket.on("room-settings-remove-users", async (data) => {
+
+        let found_room = await rooms_collection.findOne({name: data.room_name}) // check this line
+        let room_users = found_room.online_users
+
         for (let i = 0; i < data.users_to_remove.length; i++) {
             await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: data.room_name}})
             await rooms_collection.updateOne({name: data.room_name}, {$pull: {users: data.users_to_remove[i]}})
             let found_user = await users_collection.findOne({username: data.users_to_remove[i]})
             io.to(found_user.current_id).emit("room-settings-remove-room", data.room_name)
+            for (let ii = 0; ii < room_users; ii++) { //check these lines:
+                if (room_users[ii] !== found_user.username) { //
+                    let sending_user = users_collection.findOne({username: room_users[ii]}) //
+                    io.to(sending_user.current_id).emit("room-settings-remove-room-user", found_user.username) //
+                }
+            }
         }
     })
 

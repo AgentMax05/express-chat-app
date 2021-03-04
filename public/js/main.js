@@ -153,6 +153,15 @@ function enter_room(event_obj) {
     }
 }
 
+function enter_room_name(room_name) {
+    if (room_name !== current_room) {
+        clear_messages()
+        clear_all_online()
+        socket.emit("change-room", {current_room: current_room, new_room: room_name})
+        current_room = room_name
+    }
+}
+
 function clear_messages() {
     let display = document.querySelector("#chat_display")
     while (display.firstChild) {
@@ -298,5 +307,14 @@ function set_info_room_users(users) {
 }
 
 socket.on("room-settings-remove-room", (room_name) => {
+    let sidebar = document.querySelector("#sidebar")
+    let rooms = Array.from(sidebar.querySelectorAll(".chat_item"))
 
+    for (let i = 0; i < rooms.length; i++) {
+        if (rooms[i].innerText === room_name) {
+            sidebar.removeChild(rooms[i])
+            enter_room_name("general")
+            return
+        }
+    }
 }) 
