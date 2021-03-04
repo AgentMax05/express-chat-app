@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Chat Sign Up</title>
+        <link rel="stylesheet" type="text/css" href="./css/sign_up.css">
+    </head>
+    <body>
+        <div id="container">
+            <input type="text" id="username" placeholder="Enter username" required>
+            <input type="password" id="password" placeholder="Enter password" required>
+            <input type="password" id="password_check" placeholder="Re-enter password" required>
+            <button id="submit_button" onclick="submit()">Sign Up</button>
+            <p onclick="login_page()">Log in instead</p>
+        </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="./js/sign_up.js"></script>
+    </body>
+</html>

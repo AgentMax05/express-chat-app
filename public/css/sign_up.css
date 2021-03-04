@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: helvetica;
+}
+
+html, body {
+    height: 100vh;
+}
+
+body {
+    background-color: rgb(60, 60, 60);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#container {
+    display: grid;
+    border-radius: 15px;
+    background-color: rgb(40, 40, 40);
+    box-shadow: 5px 5px 10px black;
+    height: 500px;
+    width: 500px;
+    grid-template-columns: 500px;
+    grid-template-rows: 100px 100px 100px 100px;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+}
+
+#username {
+    grid-row: 1;
+    grid-column: 1;
+    height: 50px;
+    width: calc(100% - 100px);
+    margin-top: 15px;
+    font-size: 100%;
+    padding-left: 20px;
+    padding-right: 20px;
+    background-color:rgb(80, 80, 80);
+    color: white;
+    border: none;
+    outline: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#password {
+    grid-row: 2;
+    grid-column: 1;
+    height: 50px;
+    width: calc(100% - 100px);
+    margin-bottom: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 100%;
+    background-color:rgb(80, 80, 80);
+    color: white;
+    border: none;
+    outline: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#password_check {
+    grid-row: 3;
+    grid-column: 1;
+    height: 50px;
+    width: calc(100% - 100px);
+    margin-bottom: 30px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 100%;
+    background-color:rgb(80, 80, 80);
+    color: white;
+    border: none;
+    outline: none;
+    transition: background-color 0.2s ease-in-out;
+}
+
+#submit_button {
+    grid-row: 4;
+    grid-column: 1;   
+    height: 50px;
+    width: calc(100% - 350px);
+    margin-top: 5px;
+    font-size: 100%;
+    color: black;
+    background-color: rgb(80, 80, 80);
+    color: white;
+    border-radius: 15px;
+    border: none;
+    outline: none;
+    transition: transform 0.2s ease-in-out;
+}
+
+#submit_button:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+#submit_button:active {
+    transform: scale(1.2);
+}
+
+::placeholder {
+    color: white;
+    opacity: 0.5;
+}
+
+p {
+    color: rgb(30, 110, 230);
+    font-size: 100%;
+    cursor: pointer;
+    margin-top: 10px;
+}

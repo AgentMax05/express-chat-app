@@ -1,0 +1,203 @@
+button {
+    outline: none;
+    border: none;
+}
+
+#room_settings_container {
+    background-color: rgba(50, 50, 50, 0.5);
+    height: 100vh;
+    width: 100vw;
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 9;
+}
+
+#room_settings_add_user_container {
+    width: 500px;
+    height: 300px;
+    position: absolute;
+    top: calc(50vh - 150px);
+    left: calc(50vw - 250px);
+    background-color: rgb(50, 50, 50);
+    box-shadow: 2px 2px 5px black;  
+    border-radius: 10px;
+    z-index: 10;
+    display: none;
+    grid-template-columns: 500px;
+    grid-template-rows: 75px 75px;
+    row-gap: 30px;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+}
+
+#room_settings_add_user_container input {
+    grid-column: 1;
+    grid-row: 1;
+    width: 400px;
+    height: 70px;
+    background-color: rgb(80, 80, 80);
+    border: none;
+    outline: none;
+    padding-left: 15px;
+    padding-right: 15px;
+    color: white;
+    font-size: 100%;
+}
+
+#room_settings_add_user_container button {
+    grid-column: 1;
+    grid-row: 2;
+    outline: none;
+    border: none;
+    width: 400px;
+    height: 75px;
+    background-color: rgb(100, 100, 100);
+    font-size: 100%;
+    color: white;
+}
+
+#room_settings_add_user_container button:hover {
+    background-color: rgb(120, 120, 120);
+}
+
+#room_settings_add_user_exit {
+    display: flex;
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    background-color: rgb(100, 100, 100);
+    color:white;
+    font-size: 110%;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+#room_settings_remove_user_container {
+    display: none;
+    width: 500px;
+    height: 500px;
+    position: absolute;
+    top: calc(50vh - 250px);
+    left: calc(50vw - 250px);
+    background-color: rgb(50, 50, 50);
+    box-shadow: 2px 2px 5px black;  
+    border-radius: 10px;
+    z-index: 10;
+    grid-template-columns: 100%;
+    grid-template-rows: 400px 100px;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    /* display: none;
+    grid-template-columns: 500px;
+    grid-template-rows: 75px 75px;
+    row-gap: 30px;
+    align-content: center;
+    align-items: center;
+    justify-items: center; */
+    align-items: center;
+    justify-content: center;
+}
+
+#room_settings_remove_user_list {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: block;
+    height: 400px;
+    width: 400px;
+    overflow-y: scroll;
+}
+
+#room_settings_remove_user_list::-webkit-scrollbar {
+    display: none;
+}
+
+.room_settings_remove_user_item_wrapper {
+    display: grid;
+    background-color: rgb(80, 80, 80);
+    color: white;
+    font-size: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+    width: 380px;
+    height: 36px;
+    grid-template-columns: 200px 150px;
+    column-gap: 30px;
+    grid-template-rows: 36px;
+    align-items: center;
+    justify-items: center;
+    border-radius: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.room_settings_remove_user_item {
+    height: fit-content;
+    color: white;
+    font-size: 100%;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-radius: 5px;
+    grid-row: 1;
+    grid-column: 1;
+    justify-self: flex-start;
+    padding-left: 15px;
+}
+
+.room_settings_remove_user_item_wrapper button {
+    background-color: rgb(175, 30, 30);
+    color: white;
+    text-align: center;
+    width: 100px;
+    height: 26px;
+    outline: none;
+    border: none;
+    border-radius: 5px;
+    grid-column: 2;
+    grid-row: 1;
+}
+
+.room_settings_remove_user_item_wrapper button:hover {
+    background-color: rgb(190, 50, 50);
+}
+
+#room_settings_remove_user_exit {
+    display: flex;
+    height: 30px;
+    width: 30px;
+    border-radius: 100%;
+    background-color: rgb(100, 100, 100);
+    color:white;
+    font-size: 110%;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    margin-right: 10px;
+    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+    user-select: none;
+}
+
+#room_settings_remove_user_submit {
+    border-radius:10px;
+    height: 50px;
+    width: 300px;
+    color: white;
+    font-size: 100%;
+    background-color: rgb(175, 30, 30);
+}
+
+#room_settings_remove_user_submit:hover {
+    background-color: rgb(190, 50, 50);
+    transform: scale(1.05);
+}

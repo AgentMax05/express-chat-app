@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Chat App</title>
+        <!-- <script defer src="http://localhost:5050/socket.io/socket.io.js"></script> -->
+        <!-- <script defer src="server.js"></script> -->
+        <!-- <script defer src="./script.js"></script> -->
+        <link rel="stylesheet" type="text/css" href="./css/style.css">
+        <link rel="stylesheet" type="text/css" href="./css/room_settings.css">
+        <link rel="shortcut icon" href="./images/chat_app_icon2.png">
+        <script src="./utils/cookie_check.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body onload="check_cookie()">
+
+        <div id="menu_container">
+            <div id="create-room-menu">
+                <button id="exit_room_menu" onclick="exit_room_menu()">x</button>
+                <input type="text" id="room_name" placeholder="Enter room name">
+                <input type="text" id="add_user_input" placeholder="Enter a user to add">
+                <button id="add_user_button" onclick="add_room_user()">Add<br>user</button>
+                <button id="submit_room" onclick="submit_add_room()">Create Room</button>
+            </div>
+        </div>
+    
+        <div id="room_settings_container">
+            <div id="room_settings_add_user_container">
+                <input type="text" id="room_settings_add_user_input" placeholder="Enter a user to add">
+                <button id="room_settings_add_user_button" onclick="room_settings_add_user_submit()">Add user</button>
+                <div id="room_settings_add_user_exit" onclick="room_settings_add_user_exit()">x</div>
+            </div>
+
+            <div id="room_settings_remove_user_container">
+                <div id="room_settings_remove_user_list">
+                    
+                </div>
+                <div id="room_settings_remove_user_exit" onclick="room_settings_remove_user_exit()">x</div>
+                <button id="room_settings_remove_user_submit" onclick="room_settings_remove_user_submit()">Remove users</button>
+            </div>
+
+            <div id="room_settings_remove_room_container">
+                
+            </div>
+
+        </div>
+
+        <div id="container">
+            <div id="sidebar">
+
+                <div id="logged_in_as">
+                    <p id="logged_in_as_text"></p>
+                </div>
+
+                <div id="add_room" onclick="create_room()">
+                    <p>+</p>
+                </div>
+                <!-- <div id="active_users">
+                    <div id="centering">
+                        <p id="online_users_text">Online Users:</p>
+                    </div>
+                    <div id="styling"></div>
+                    <div id="users_container">
+                    </div>
+                </div> -->
+            </div>
+            <div id="right_sidebar">
+                <div id="right_bar_users_container">
+                    <p id="right_bar_title">Users In This Room</p>
+                    <div id="title_br"></div>
+                    <div id="right_bar_users">
+                    </div>
+                </div>
+
+                <div id="right_bar_settings_container">
+                    <div id="settings_title">
+                        <p>Settings</p>
+                    </div>
+                    <div id="title_br" class="settings_br"></div>
+                    <div id="manage_users_add" class="setting" onclick="settings_add_user()">
+                        <p>Add users to room</p>
+                    </div>
+                    <div id="manage_users_remove" class="setting" onclick="settings_remove_user()">
+                        <p>Remove users from room</p>
+                    </div>
+                    <div id="manage_room_delete" class="setting" onclick="settings_delete_room()">
+                        <p>Delete room</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="room_info">
+                <p id="room_info_room_name"></p>
+            </div>
+            <!-- <div id="display_wrapper"> -->
+            <div id="chat-flex">
+                <div id="chat_display">
+                </div>
+            </div>        
+            <!-- </div> -->
+            <input type="text" id="input" placeholder="Type here...">
+            <button onclick="submit()" id="send_button">Send</button>
+        </div>
+        <!-- <script src="./sidebar_controller.js"></script> -->
+        <!-- <button style="z-index: 100; position: absolute; left: 0px; top: 0px;" onclick="add_child()">click me</button> -->
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="js/main.js"></script>
+        <script src="./utils/room_settings.js"></script>
+    </body>
+</html>

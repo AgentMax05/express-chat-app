@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>Chat Login</title>
+        <link rel="stylesheet" type="text/css" href="./css/login.css">
+        <link rel="shortcut icon" href="./images/chat_app_icon2.png">
+    </head>
+    <body>
+        <div id="container">
+                <input id="username" type="text" placeholder="Enter username" name="username" required>
+                <input id="password" type="password" placeholder="Enter password" required>
+                <button id="submit_button" onclick="submit()">Log in</button>
+                <p onclick="signup_page()">Sign up instead</p>
+        </div>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="./js/login.js"></script>
+    </body>
+</html>
