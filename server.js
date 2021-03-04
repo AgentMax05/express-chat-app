@@ -209,6 +209,15 @@ io.on("connection", function(socket) {
         add_user_into_room(username, room)
     })
 
+    socket.on("room-settings-remove-users", async (data) => {
+        for (let i = 0; i < data.users_to_remove.length; i++) {
+            await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: data.room_name}})
+            await rooms_collection.updateOne({name: data.room_name}, {$pull: {users: data.users_to_remove[i]}})
+            let found_user = await users_collection.findOne({username: data.users_to_remove[i]})
+            io.to(found_user.current_id).emit("room-settings-remove-room", data.room_name)
+        }
+    })
+
 })
 
 async function emit_to_in_room(message_name, room_name, message) {

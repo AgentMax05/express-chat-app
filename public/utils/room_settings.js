@@ -79,7 +79,7 @@ function room_settings_remove_user_exit() {
 }
 
 function room_settings_remove_user_submit() {
-    socket.emit("room-settings-remove-users", {users: users_to_remove, room: current_room})
+    socket.emit("room-settings-remove-users", {users_to_remove: users_to_remove, room_name: current_room})
 }
 
 // delete room functions
