@@ -28,6 +28,8 @@ function room_settings_add_user_submit() {
     socket.emit("add_user_to_room", {user: username, room: current_room})
 }
 
+//remove user functions
+
 socket.on("room-settings-user-response", (users) => {
     let user_list = document.querySelector("#room_settings_remove_user_list")
     for (let i = 0; i < users.length; i++) {
@@ -49,8 +51,6 @@ socket.on("room-settings-user-response", (users) => {
     }
     
 })
-
-//remove user functions
 
 function settings_remove_user() {
     users_to_remove = []
@@ -82,6 +82,17 @@ function room_settings_remove_user_submit() {
     socket.emit("room-settings-remove-users", {users_to_remove: users_to_remove, room_name: current_room})
 }
 
+socket.on("room-settings-remove-room-user", (username) => {
+    let users_container = document.querySelector("#right_bar_users")
+    let users_list = Array.from(users_container.querySelectorAll(".room_user"))
+    for (let i = 0; i < users_list.length; i++) {
+        if (users_list[i].innerText === username) {
+            users_container.removeChild(users_list[i])
+            return
+        }
+    }
+})
+
 // delete room functions
 
 function settings_delete_room() {
@@ -104,15 +115,3 @@ function remove_children(element) {
         element.removeChild(element.firstChild)
     }
 }
-
-socket.on("room-settings-remove-room-user", (username) => {
-    console.log("should remove user")
-    let users_container = document.querySelector("#right_bar_users")
-    let users_list = Array.from(users_container.querySelectorAll(".room_user"))
-    for (let i = 0; i < users_list.length; i++) {
-        if (users_list[i].innerText === username) {
-            users_container.removeChild(users_list[i])
-            return
-        }
-    }
-})

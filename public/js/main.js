@@ -104,10 +104,9 @@ function submit() {
     if (msg != "") {
         input_field.value = ""
         socket.emit("chat-message", {id: self_id, message: msg, room_name: current_room})
+        console.log("emmiting")
     }
 }
-
-let current_row2 = 2
 
 function outputSelfMessage(message) {
     let display = document.querySelector("#chat_display")
@@ -140,8 +139,6 @@ function outputOtherMessage(message) {
 
 let sidebar = document.querySelector("#sidebar")
 
-let current_row = 2
-
 function enter_room(event_obj) {
     let room_name = event_obj.target.innerText
     if (room_name != current_room) {
@@ -170,16 +167,16 @@ function clear_messages() {
 }
 
 function add_room(name) {
-    sidebar.style.gridTemplateRows = `${window.getComputedStyle(sidebar).gridTemplateRows} 100px`
+    // sidebar.style.gridTemplateRows = `${window.getComputedStyle(sidebar).gridTemplateRows} 100px`
     let new_div = document.createElement("div")
     new_div.className = "chat_item"
     let new_text = document.createElement("p")
     new_text.innerHTML = name
     new_text.style.userSelect = "none"
     new_div.appendChild(new_text)
-    new_div.style.gridRow = current_row
+    // new_div.style.gridRow = current_row
     new_div.addEventListener("click", enter_room)
-    current_row = current_row + 1
+    // current_row = current_row + 1
     sidebar.appendChild(new_div)
 }
 
@@ -213,6 +210,9 @@ function clear_all_online() {
 }
 
 function remove_online_user(username) {
+
+    console.log(`removing user ${username}`)
+
     // let current_users = document.getElementsByClassName("user_object")
     // let user_obj = Array.from(current_users).find((element) => {
     //     return element.querySelector("p").innerHTML === username

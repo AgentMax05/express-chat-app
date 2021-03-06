@@ -32,6 +32,7 @@ mongo.connect(mongo_url, {useNewUrlParser: true, useUnifiedTopology: true}, asyn
     messages_collection = database.collection("messages")
     rooms_collection = database.collection("rooms")
     await rooms_collection.updateMany({}, { $set: {online_users: []}})
+    await users_collection.updateMany({}, {$set: {status: false}})
     await users_collection.find().toArray((error, items) => {
         if (error) {
             console.error(error)
@@ -105,9 +106,9 @@ io.on("connection", function(socket) {
 
     // Broadcast when a user connects
 
-    socket.on("login-connection", function(data) {
+    socket.on("login-connection", async function(data) {
         console.log(`attempted login for ${data.username}`)
-        let found_user = find_user(data.username)
+        let found_user = await find_user(data.username)
         if (found_user === null) {
             socket.emit("redirect_command", "http://localhost:3000")
             return
@@ -115,7 +116,7 @@ io.on("connection", function(socket) {
         let log_in_result = log_in_user(found_user, data.id)
         if (!log_in_result) {
             socket.emit("redirect_command", "http://localhost:3000")
-            console.log(`${data.username} login attempt denied`)
+            console.log(`${data.username} login attempt denied_____`)
         }
         else {
             console.log(`${data.username} login attempt accepted`)
@@ -148,27 +149,46 @@ io.on("connection", function(socket) {
     })
 
     // on disconnect
-    socket.on("disconnect", function() {
-        user = find_user_by_id(socket.id)
+    socket.on("disconnect", async () => {
+
+        user = await find_user_by_id(socket.id)
+
         if (user === null) {
             return
         }
-        console.log(`${user.username} has logged out`)
-        log_out_user(user)
+
+        let found_user = await users_collection.findOne({username: user})
+        console.log(`found user: ${found_user.username}`)
+        users_room = found_user.current_room
+
+        await rooms_collection.updateOne({name: users_room}, {$pull: {online_users: found_user.username}})
+
+        let users_room_online = await rooms_collection.findOne({name: users_room})
+        users_room_online = users_room_online.online_users
+        console.log(users_room_online)
+
+        for (let i = 0; i < users_room_online.length; i++) {
+            let current_user = await users_collection.findOne({username: users_room_online[i]})
+            io.to(current_user.current_id).emit("remove_online_user", found_user.username)
+        }
+
+        console.log(`${found_user.username} has logged out`)
+        await log_out_user(found_user.username)
         // io.emit("message", {id: 3, message: `${user.username} has left the chat.`})
-        io.emit("remove_online_user", user.username)
+        //io.emit("remove_online_user", user.username)
     })
 
-    socket.on("chat-message", async function(data) {
+    socket.on("chat-message", async (data) => {
         messages_collection.updateOne({name: data.room_name}, {$push: {messages: {message: data.message, from: find_user_by_id(socket.id).username}}})
         emit_to_in_room("message", data.room_name, {message: data.message, from: socket.id})
         // io.emit("message", data)
     })
 
-    socket.on("login-check", function(data) {
-        if (check_login(data)) {
+    socket.on("login-check", async function(data) {
+        if (await check_login(data)) {
+            //expected_logins.push(await find_user(data.username))
+            expected_logins.push(data.username)
             socket.emit("login-result", {result: true, username: data.username})
-            expected_logins.push(find_user(data.username))
         }
         else {
             socket.emit("login-result", {result: false, username: data.username})
@@ -205,12 +225,10 @@ io.on("connection", function(socket) {
     socket.on("add_user_to_room", (data) => {
         let username = data.user
         let room = data.room
-        //let found_user = find_user_db(username)
         add_user_into_room(username, room)
     })
 
     socket.on("room-settings-remove-users", async (data) => {
-
         let found_room = await rooms_collection.findOne({name: data.room_name}) // check this line
         let room_users = found_room.online_users
 
@@ -218,10 +236,12 @@ io.on("connection", function(socket) {
             await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: data.room_name}})
             await rooms_collection.updateOne({name: data.room_name}, {$pull: {users: data.users_to_remove[i]}})
             let found_user = await users_collection.findOne({username: data.users_to_remove[i]})
-            io.to(found_user.current_id).emit("room-settings-remove-room", data.room_name)
-            for (let ii = 0; ii < room_users; ii++) { //check these lines:
+            io.to(found_user.current_id).emit("room-settings-remove-room", data.room_name) 
+
+            for (let ii = 0; ii < room_users.length; ii++) { //check these lines:
+                console.log(`sending to ${room_users[ii]}, remove user is ${found_user.username}`)
                 if (room_users[ii] !== found_user.username) { //
-                    let sending_user = users_collection.findOne({username: room_users[ii]}) //
+                    let sending_user = await users_collection.findOne({username: room_users[ii]}) //
                     io.to(sending_user.current_id).emit("room-settings-remove-room-user", found_user.username) //
                 }
             }
@@ -233,10 +253,16 @@ io.on("connection", function(socket) {
 async function emit_to_in_room(message_name, room_name, message) {
     let room_users = await rooms_collection.findOne({name: room_name}).catch((error) => console.error(error))
     let users_in_room = room_users.online_users
-    users_in_room.forEach(async(user) => {
-        let found_user = await users_collection.findOne({username: user})
+
+    for (let i = 0; i < users_in_room.length; i++) {
+        let found_user = await users_collection.findOne({username: users_in_room[i]})
         io.to(found_user.current_id).emit(message_name, message)
-    })
+    }
+
+    // users_in_room.forEach(async (user) => {
+    //     let found_user = await users_collection.findOne({username: user})
+    //     io.to(found_user.current_id).emit(message_name, message)
+    // })
 }
 
 async function send_room_messages(user_id, room_name) {
@@ -249,11 +275,12 @@ async function send_room_messages(user_id, room_name) {
 }
 
 function log_in_user(user, id) {
+
     if (user.status === false && in_expected_logins(user)) {
         user.status = true
         user.current_id = id
         active_users.push(user)
-        users_collection.updateOne({username: user.username}, {$set : {current_id: user.current_id}})
+        users_collection.updateOne({username: user.username}, {$set : {current_id: user.current_id, current_room: "general", status: true}})
         return true
     }
     else {
@@ -263,7 +290,8 @@ function log_in_user(user, id) {
 
 function in_expected_logins(user) {
     for (let i = 0; i < expected_logins.length; i++) {
-        if (expected_logins[i] === user) {
+
+        if (expected_logins[i] === user.username) {
             expected_logins.splice(i, 1)
             return true
         }
@@ -295,6 +323,8 @@ async function join_room(room_name, username) {
     let joining_user = await users_collection.findOne({"username": username})
 
     console.log(`room users: ${JSON.stringify(room_users.users)}`)
+
+    await users_collection.updateOne({"username": username}, {$set: {current_room: room_name}})
 
     io.to(joining_user.current_id).emit("room-info", {"room_name": room_name, users: room_users.users})
 
@@ -333,28 +363,48 @@ function in_active_users_username(username) {
     return false
 }
 
-function log_out_user(user) {
+async function log_out_user(user) {
     user.status = false
     user.current_id = null
     active_users.splice(active_users.indexOf(user), 1)
+
+    await users_collection.updateOne({username: user}, {$set: {status: false}})
+
 }
 
-function find_user(username) {
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].username === username) {
-            return users[i]
-        }
+async function find_user(username) {
+    // for (let i = 0; i < users.length; i++) {
+    //     if (users[i].username === username) {
+    //         return users[i]
+    //     }
+    // }
+    // return null
+
+    let found_user = await users_collection.findOne({username: username})
+    if (found_user === null) {
+        return null
     }
-    return null
+    return found_user
+
 }
 
-function find_user_by_id(id) {
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].current_id === id) {
-            return users[i]
-        }
+async function find_user_by_id(id) {
+    // for (let i = 0; i < users.length; i++) {
+    //     if (users[i].current_id === id) {
+    //         return users[i]
+    //     }
+    // }
+    // return null
+
+    let found_user = await users_collection.findOne({current_id: id})
+
+    if (found_user === null) {
+        return null
     }
-    return null
+    else {
+        return found_user.username
+    }
+
 }
 
 async function send_login_confirmation(user_id) {
@@ -362,20 +412,33 @@ async function send_login_confirmation(user_id) {
     io.to(user_id).emit("login-confirmation", {rooms: found_user.rooms})
 }
 
-function check_login(data) {
-    for(let i = 0; i < users.length; i++) {
-        if(users[i].username === data.username) {
-            if (users[i].password === data.password) {
-                if (users[i].status === false) {
-                    return true
-                }
-                return false
-            }
+async function check_login(data) {
 
-            return false
-        }
+    let found_user = await users_collection.findOne({username: data.username})
+
+    if (found_user === null) {
+        return false
     }
+
+    if (found_user.password === data.password && found_user.status === false) {
+        return true
+    }
+
     return false
+
+    // for(let i = 0; i < users.length; i++) {
+    //     if(users[i].username === data.username) {
+    //         if (users[i].password === data.password) {
+    //             if (users[i].status === false) {
+    //                 return true
+    //             }
+    //             return false
+    //         }
+
+    //         return false
+    //     }
+    // }
+    // return false
 }
 
 function check_signup(username) {
@@ -388,7 +451,7 @@ function check_signup(username) {
 }
 
 async function add_user(data) {
-    let new_user = {username: data.username, password: data.password, status: false, current_id: null, rooms: ["general"]}
+    let new_user = {username: data.username, password: data.password, status: false, current_id: null, rooms: ["general"], current_room: null}
     users.push(new_user)
     users_collection.insertOne(new_user)
     console.log(`New user created: ${JSON.stringify(new_user)}`)
@@ -450,10 +513,10 @@ async function create_room(room_name, room_users) {
     console.log(`new room created: ${room_name} with ${real_users}__`)
 }
 
-async function find_user_db(username) {
-    let found_user = await users_collection.findOne({"username": username})
-    return found_user
-}
+// async function find_user_db(username) {
+//     let found_user = await users_collection.findOne({"username": username})
+//     return found_user
+// }
 
 async function add_user_into_room(username, room_name) {
 
