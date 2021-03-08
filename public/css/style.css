@@ -1,7 +1,14 @@
+@font-face {
+    font-family: "SF Pro";
+    src: url('../fonts/SFPro-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
-    font-family: 'SF Pro Display', 'sans-serif';
+    font-family: "SF Pro", sans-serif;
     box-sizing: border-box;
     /* transition: all 0.2s ease-in-out; */
     transition: all 0.1s ease, height 0s, width 0s;
@@ -31,7 +38,8 @@ body {
 #container {
     display:grid;
     grid-template-columns: 200px calc(100vw - 530px) 130px 200px;
-    grid-template-rows: 92vh 8vh;
+    /* grid-template-rows: 92vh 8vh; */
+    grid-template-rows: calc(100vh - 62px) 62px;
     row-gap: 0px;
     column-gap: 0px;
     align-content: center;
@@ -47,7 +55,7 @@ body {
     width: calc(100% - 25px);
     margin-left: 15px;
     margin-right: 10px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     grid-row: 2;
     grid-column: 2;
     font-size: 100%;
@@ -113,7 +121,7 @@ body {
     grid-row: 2;
     grid-column: 3;
     width: calc(100% - 30px);
-    margin-bottom: 30px;
+    margin-bottom: 15px;
     margin-left: 10px;
     margin-right: 20px;
     height: 47px;
@@ -163,7 +171,8 @@ body {
     /* width: calc(100% - 20px); */
     width: 100%;
     /* height: 855px; */
-    height: calc(90vh - 80px);
+    /* height: calc(90vh - 80px); */
+    height: calc(100vh - 62px - 80px - 10px);
     margin-top: 80px;
     margin-bottom: 15px;
     top: 0;
@@ -587,10 +596,71 @@ body {
     justify-content: center;
 }
 
+#right_sidebar_button_container {
+    display: none;
+    width: 30px;
+    height: 13px;
+    position: absolute;
+    right: 30px;
+    top: 33.5px;
+    border-radius: 2px;
+}
+
+#right_sidebar_button_container:hover > #right_sidebar_button {
+    background-color: rgb(155, 155, 155);
+}
+
+/* #right_sidebar_button_container:hover > #right_sidebar_button::after {
+    background-color: rgb(155, 155, 155);
+}
+
+#right_sidebar_button_container:hover > #right_sidebar_button::before {
+    background-color: rgb(155, 155, 155);
+} */
+
+
+#right_sidebar_button {
+    display: none;
+    width: 30px;
+    height: 3px;
+    position: absolute;
+    background-color: white;
+    top: 0px;
+    border-radius: 2px;
+}
+
+#right_sidebar_button::before {
+    display: none;
+    content: "";
+    width: 30px;
+    height: 3px;
+    border-radius: 2px;
+    position: absolute;
+    top: 5px;
+    background-color: inherit;
+}
+
+#right_sidebar_button::after {
+    display: none;
+    content: "";
+    width: 30px;
+    height: 3px;
+    border-radius: 2px;
+    position: absolute;
+    top: 10px;
+    background-color: inherit;
+}
+
+/* #right_sidebar_button:hover,
+#right_sidebar_button::before:hover,
+#right_sidebar_button::after:hover {
+    background-color: green;
+} */
+
 #room_info_room_name {
     color: white;
     font-size: 40px;
-    font-weight: bold;
+    /* font-weight: bold; */
 }
 
 #right_bar_settings_container {
@@ -631,4 +701,37 @@ body {
 
 #settings_title {
     text-align: center;
+}
+
+/* changing left sidebar when screen gets too small */
+
+@media (max-width: 1300px) {
+    #right_sidebar {
+        display: none;
+    }
+    #container {
+        grid-template-columns: 200px calc(100vw - 330px) 130px;
+    }
+    #room_info {
+        width: calc(100vw - 200px);
+    }
+    #right_sidebar_button_container,
+    #right_sidebar_button,
+    #right_sidebar_button::before,
+    #right_sidebar_button::after {
+        display: block;
+        z-index: 1;
+    }
+}
+
+@media (min-width: 1301px) {
+    #right_sidebar {
+        display: block !important;
+    }
+    #container {
+        grid-template-columns: 200px calc(100vw - 530px) 130px 200px !important;
+    }
+    #room_info {
+        width: calc(100vw - 400px) !important;
+    }
 }

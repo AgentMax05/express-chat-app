@@ -1,4 +1,3 @@
-
 const room_settings_menu_container = document.querySelector("#room_settings_container")
 const add_user_container = document.querySelector("#room_settings_add_user_container")
 const remove_user_container = document.querySelector("#room_settings_remove_user_container")
@@ -99,6 +98,41 @@ function settings_delete_room() {
     room_settings_menu_container.style.display = "block"
     delete_room_container.style.display = "grid"
 }
+
+// toggle right sidebar when button is clicked
+
+function toggle_right_sidebar() {
+    let right_sidebar = document.querySelector("#right_sidebar")
+    let main_container = document.querySelector("#container")
+    let top_bar = document.querySelector("#room_info")
+
+    let current_display = getComputedStyle(right_sidebar).display
+    if (current_display === "none") {
+        right_sidebar.style.display = "block"
+        main_container.style.gridTemplateColumns = "200px calc(100vw - 530px) 130px 200px"
+        top_bar.style.width = "calc(100vw - 400px)"
+    }
+    else {
+        right_sidebar.style.display = "none"
+        main_container.style.gridTemplateColumns = "200px calc(100vw - 330px) 130px"
+        top_bar.style.width = "calc(100vw - 200px)"
+    }
+}
+
+// window.onresize = check_sidebar_display
+
+// function check_sidebar_display() {
+//     let container = document.querySelector("#container")
+//     let right_sidebar = document.querySelector("#right_sidebar")
+//     if (window.innerWidth > 1300 && right_sidebar.style.display === "none") {
+//         console.log("making sidebar larger")
+//         right_sidebar.style.display = "block"
+//         document.querySelector("#container").style.gridTemplatecolumns = "200px calc(100vw - 530px) 130px 200px"
+//     }
+//     else if (window.innerWidth > 1300 && container.style.gridTemplateColumns !== "200px calc(100vw - 530px) 130px 200px") {
+//         container.style.gridTemplateColumns = document.querySelector("#container").style.gridTemplatecolumns = "200px calc(100vw - 530px) 130px 200px"
+//     }
+// }
 
 // miscellaneous functions
 

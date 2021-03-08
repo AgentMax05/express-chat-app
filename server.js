@@ -3,7 +3,8 @@ const http = require("http")
 const express = require("express")
 const socketio = require("socket.io")
 const mongo = require("mongodb").MongoClient
-const e = require("express")
+//const e = require("express")
+const fs = require("fs")
 
 const mongo_url = "mongodb://localhost:27017"
 
@@ -97,6 +98,19 @@ app.get("/utils/room_settings.js", function(req, res) {
 
 app.get("/css/room_settings.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/room_settings.css"))
+})
+
+app.get("/css/loader.css", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/css/loader.css"))
+})
+
+app.get("/fonts/:font_name", function(req, res) {
+    if (fs.existsSync(`./public/fonts/${req.params.font_name}`)) {
+        res.sendFile(path.join(__dirname, `/public/fonts/${req.params.font_name}`))
+    }
+    else {
+        res.sendStatus(404)
+    }
 })
 
 // Run when a client connects
