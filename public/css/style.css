@@ -8,7 +8,7 @@
 * {
     margin: 0;
     padding: 0;
-    font-family: "SF Pro", sans-serif;
+    font-family: "Inter", sans-serif;
     box-sizing: border-box;
     /* transition: all 0.2s ease-in-out; */
     transition: all 0.1s ease, height 0s, width 0s;
