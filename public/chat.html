@@ -10,18 +10,21 @@
         <link rel="stylesheet" type="text/css" href="./css/room_settings.css">
         <link rel="shortcut icon" href="./images/chat_app_icon2.png">
         <link rel="stylesheet" type="text/css" href="./css/loader.css">
+        <script src="./utils/remove_loading.js"></script>
         <script src="./utils/cookie_check.js"></script>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <!-- 500 weight font alternative to apple SF Pro font -->
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap" rel="stylesheet">
-        
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap" rel="stylesheet">
+
     </head>
     <body onload="check_cookie()">
         
         <div id="loader_div">
             <div id="loader"></div>
+            <div id="loader2"></div>
+            <!-- <div id="loader3"></div> -->
         </div>
 
         <div id="menu_container">
@@ -98,6 +101,9 @@
                     </div>
                     <div id="manage_users_remove" class="setting" onclick="settings_remove_user()">
                         <p>Remove users from room</p>
+                    </div>
+                    <div id="manage_leave_room" class="setting" onclick="settings_leave_room()">
+                        <p>Leave Room</p>
                     </div>
                     <div id="manage_room_delete" class="setting" onclick="settings_delete_room()">
                         <p>Delete room</p>

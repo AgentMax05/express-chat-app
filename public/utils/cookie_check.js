@@ -1,13 +1,17 @@
+let finished_loading = false
+let finished_loading_messages = false
+
 function check_cookie() {
     if (!document.cookie === "authentication=true") {
         window.location.href="http://localhost:3000"
     }
     else {
-        document.querySelector("#loader").remove()
-        document.querySelector("#loader_div").style.backgroundColor = "rgba(255, 255, 255, 0)"
-
-        setTimeout(() => {
-            document.querySelector("#loader_div").remove()
-        }, 250)
+        if (finished_loading_messages) {
+            finished_loading = true
+            remove_loading()
+        }
+        else {
+            finished_loading = true
+        }
     }
 }

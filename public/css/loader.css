@@ -23,8 +23,39 @@
     width: 150px;
     height: 150px;
     border-radius: 100%;
-    animation: spin 1s linear infinite;
+    animation: spin 1s cubic-bezier(0.38,-0.57, 0.26, 1.16) infinite;
+    position: absolute;
 }
+
+#loader2 {
+    content: "";
+    z-index: 11;
+    box-sizing: border-box;
+    background-color: rgb(30, 30, 30);
+    border: 8px solid rgb(80, 80, 80);
+    border-top: 8px solid rgb(30, 30, 30);
+    display: block;
+    width: 132px;
+    height: 132px;
+    border-radius: 100%;
+    animation: spin 1.5s cubic-bezier(0.38,-0.57, 0.26, 1.16) infinite;
+    position: absolute;
+}
+/* 
+#loader3 {
+    content: "";
+    z-index: 11;
+    box-sizing: border-box;
+    background-color: rgb(30, 30, 30);
+    border: 6px solid rgb(80, 80, 80);
+    border-top: 6px solid rgb(30, 30, 30);
+    display: block;
+    width: 126px;
+    height: 126px;
+    border-radius: 100%;
+    animation: spin 3s cubic-bezier(.04,1.58,.82,-0.16) infinite;
+    position: absolute;
+} */
 
 @keyframes spin {
     0% {transform: rotate(0deg);}

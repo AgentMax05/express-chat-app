@@ -5,6 +5,7 @@ const socketio = require("socket.io")
 const mongo = require("mongodb").MongoClient
 //const e = require("express")
 const fs = require("fs")
+const e = require("express")
 
 const mongo_url = "mongodb://localhost:27017"
 
@@ -104,6 +105,10 @@ app.get("/css/loader.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/loader.css"))
 })
 
+app.get("/utils/remove_loading.js", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/utils/remove_loading.js"))
+})
+
 app.get("/fonts/:font_name", function(req, res) {
     if (fs.existsSync(`./public/fonts/${req.params.font_name}`)) {
         res.sendFile(path.join(__dirname, `/public/fonts/${req.params.font_name}`))
@@ -192,7 +197,7 @@ io.on("connection", function(socket) {
     socket.on("chat-message", async (data) => {
         let found_user = await find_user_by_id(socket.id)
         messages_collection.updateOne({name: data.room_name}, {$push: {messages: {message: data.message, from: found_user.username}}})
-        emit_to_in_room("message", data.room_name, {message: data.message, from: socket.id})
+        emit_to_in_room("message", data.room_name, {message: data.message, from: socket.id, user_from: found_user.username})
         // io.emit("message", data)
     })
 
@@ -207,8 +212,8 @@ io.on("connection", function(socket) {
         }
     })
 
-    socket.on("signup-check", function(data) {
-        let sign_up_result = check_signup(data.username)
+    socket.on("signup-check", async (data) => {
+        let sign_up_result = await check_signup(data.username)
         if (sign_up_result) {
             add_user(data)
             socket.emit("signup-result", true)
@@ -221,9 +226,12 @@ io.on("connection", function(socket) {
     socket.on("change-room", async (data) => {
 
         let found_user = await find_user_by_id(socket.id)
-
+    
         console.log(`${found_user.username} is changing rooms to ${data.new_room}`)
-        leave_room(data.current_room, found_user.username)
+        
+        if (!data.deleting_room) {
+            leave_room(data.current_room, found_user.username)
+        }
         join_room(data.new_room, found_user.username)
         send_room_messages(socket.id, data.new_room)
     })
@@ -262,6 +270,15 @@ io.on("connection", function(socket) {
                 }
             }
         }
+
+        let refound_room = await rooms_collection.findOne({name: data.room_name})
+        if (refound_room.users.length === 0) {
+            await delete_room(data.room_name)
+        }
+    })
+
+    socket.on("room-settings-delete-room", async (room_name) => {
+        await delete_room(room_name)
     })
 
 })
@@ -284,10 +301,7 @@ async function emit_to_in_room(message_name, room_name, message) {
 async function send_room_messages(user_id, room_name) {
     console.log(`fetching messages in ${room_name}`)
     room_messages = await messages_collection.findOne({name: room_name})
-    // room_messages.messages.forEach((message) => {
-    //     io.to(user_id).emit("message-answer", message)
-    // })
-    io.to(user_id).emit("message-answer", room_messages.messages)
+    io.to(user_id).emit("message-answer", room_messages.messages.concat(["$${{||}}$$"]))
 }
 
 function log_in_user(user, id) {
@@ -316,6 +330,7 @@ function in_expected_logins(user) {
 }
 
 async function leave_room(room_name, username) {
+
     rooms_collection.updateOne({name: room_name}, {$pull: {online_users: username}})
     let room_users = await rooms_collection.findOne({name: room_name})
     users_in_room = room_users.online_users
@@ -332,6 +347,7 @@ async function leave_room(room_name, username) {
     //         io.to(user.current_id).emit("remove_online_user", username)
     //     }
     // })
+
 }
 
 async function join_room(room_name, username) {
@@ -373,7 +389,7 @@ async function log_out_user(user) {
     user.current_id = null
     active_users.splice(active_users.indexOf(user), 1)
 
-    await users_collection.updateOne({username: user}, {$set: {status: false}})
+    await users_collection.updateOne({username: user}, {$set: {status: false, current_id: null}})
 
 }
 
@@ -440,13 +456,18 @@ async function check_login(data) {
     // return false
 }
 
-function check_signup(username) {
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].username === username) {
-            return false
-        }
+async function check_signup(username) {
+    // for (let i = 0; i < users.length; i++) {
+    //     if (users[i].username === username) {
+    //         return false
+    //     }
+    // }
+
+    let found_user = await users_collection.findOne({username: username})
+    if (found_user === null) {
+        return true
     }
-    return true
+    return false
 }
 
 async function add_user(data) {
@@ -527,6 +548,24 @@ async function add_user_into_room(username, room_name) {
         }
 
         io.to(found_user.current_id).emit("add_room", room_name)
+    }    
+}
+
+async function delete_room(room_name) {
+    console.log("deleting room")
+    let found_room = await rooms_collection.findOne({name: room_name})
+    for (let i = 0; i < found_room.users.length; i++) {
+        console.log("pulling" + room_name)
+        await users_collection.updateOne({username: found_room.users[i]}, {$pull: {rooms: room_name}})
+        let found_user = await users_collection.findOne({username: found_room.users[i]})
+        if (found_user.current_id !== null) {
+            console.log("emitting")
+            io.to(found_user.current_id).emit("room-settings-remove-room", room_name)
+        }
+        else {
+            console.log(`found_user current id is ${found_user.current_id}`)
+        }
     }
-    
+    await messages_collection.deleteOne({name: room_name})
+    await rooms_collection.deleteOne({name: room_name})
 }

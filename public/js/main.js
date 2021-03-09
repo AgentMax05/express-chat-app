@@ -38,24 +38,27 @@ socket.on("message", function(data) {
         outputSelfMessage(data.message)
     }
     else {
-        outputOtherMessage(data.message)
+        outputOtherMessage(data.message, data.user_from)
     }
 })
 
 socket.on("message-answer", function(messages) {
-    // if (message.from_me) {
-    //     outputSelfMessage(message.message)
-    // }
-    // else {
-    //     outputOtherMessage(message.message)
-    // }
     messages.forEach((message) => {
-        // console.log(`loading message: ${message.message}`)
+        if (message === "$${{||}}$$") {
+            if (finished_loading) {
+                finished_loading_messages = true
+                remove_loading()
+            }
+            else {
+                finished_loading_messages = true
+            }
+            return
+        }
         if (message.from === user) {
         outputSelfMessage(message.message)
         }
         else {
-            outputOtherMessage(message.message)
+            outputOtherMessage(message.message, message.from)
         }
     })
     
@@ -104,36 +107,101 @@ function submit() {
     if (msg != "") {
         input_field.value = ""
         socket.emit("chat-message", {id: self_id, message: msg, room_name: current_room})
-        console.log("emmiting")
     }
 }
 
 function outputSelfMessage(message) {
     let display = document.querySelector("#chat_display")
     let new_div2 = document.createElement("div")
-    // new_div2.style.gridRow = current_row2
-    // current_row2 = current_row2 + 1
-    // new_div2.style.gridColumn = "1"
+
+    let message_class = "message_container_self"
+
+    let last_child = display.lastElementChild
+
+    if (last_child !== null) {
+        let message_container = last_child.querySelector(".message_container_self")
+        let message_container_repeat = last_child.querySelector(".message_container_self_repeat")
+        
+        if (message_container !== null) {
+            message_container.style.marginBottom = "2px"
+            message_class = "message_container_self_repeat"
+        }
+        else if (message_container_repeat !== null) {
+            message_container_repeat.style.marginBottom = "2px"
+            message_container_repeat.style.borderRadius = "2px 10px 10px 2px"
+            message_class = "message_container_self_repeat"
+        }
+
+    }
+
     new_div2.classList.add("message")
     new_div3 = document.createElement("div")
-    new_div3.classList.add("message_container_self")
+    new_div3.classList.add(message_class)
     new_div3.innerHTML = `<p>${message}</p>`
     new_div2.appendChild(new_div3)
-    // display.style.gridTemplateRows = `${window.getComputedStyle(display).gridTemplaterows} 16px`
     display.appendChild(new_div2)
-    //display.appendChild(document.createElement("hr"))
     display.scrollTop = display.scrollHeight
 }
 
-function outputOtherMessage(message) {
+function outputOtherMessage(message, user_from) {
     let display = document.querySelector("#chat_display")
     let new_div2 = document.createElement("div")
+    let message_grid = document.createElement("div")
+    
+    let message_class = "message_container_other"
+    let grid_class = "message_grid"
+    let add_from = true
+    
+    let last_message = display.lastElementChild
+    if (last_message !== null) {
+        if (last_message.querySelector(".message_container_self") === null && last_message.querySelector(".message_container_self_repeat") === null) {
+            if (last_message.querySelector(".from_div").innerText === user_from) {
+                let last_message_grid = last_message.querySelector(".message_grid")
+                let last_message_repeating_grid = last_message.querySelector(".message_grid_repeat")
+                let last_message_container = last_message.querySelector(".message_container_other")
+                let last_message_container_repeat = last_message.querySelector(".message_container_other_repeat")
+
+                if (last_message_grid !== null) {
+                    last_message_grid.style.marginBottom = "2px"
+                }
+                else {
+                    last_message_repeating_grid.style.marginBottom = "2px"
+                    last_message_container_repeat.style.borderRadius = "10px 2px 2px 10px"
+                }
+
+                message_class = "message_container_other_repeat"
+                grid_class = "message_grid_repeat"
+                add_from = false
+            }
+        }
+    }
+    
+    
+    message_grid.classList.add(grid_class)
+    
     new_div2.classList.add("message")
+    
     new_div3 = document.createElement("div")
-    new_div3.classList.add("message_container_other")
+    new_div3.classList.add(message_class)
     new_div3.innerHTML = `<p>${message}</p>`
-    new_div2.appendChild(new_div3)
+    
+    let from_div = document.createElement("div")
+    from_div.classList.add("from_div")
+    from_div.innerText = user_from
+    
+    if (!add_from) {
+        from_div.style.display = "none"
+    }
+    
+    message_grid.appendChild(from_div)
+
+    message_grid.appendChild(new_div3)
+    new_div2.appendChild(message_grid)
+    // new_div2.appendChild(from_div)
+    // new_div2.appendChild(new_div3)
+
     display.appendChild(new_div2)
+
     display.scrollTop = display.scrollHeight
 }
 
@@ -141,20 +209,20 @@ let sidebar = document.querySelector("#sidebar")
 
 function enter_room(event_obj) {
     let room_name = event_obj.target.innerText
-    if (room_name != current_room) {
+    if (room_name !== current_room) {
         // console.log(`switching rooms to ${room_name}_`)
         clear_messages()
         clear_all_online()
-        socket.emit("change-room", {current_room: current_room, new_room: room_name})
+        socket.emit("change-room", {current_room: current_room, new_room: room_name, deleting_room: false})
         current_room = room_name
     }
 }
 
-function enter_room_name(room_name) {
+function enter_room_name(room_name, deleting_room = false) {
     if (room_name !== current_room) {
         clear_messages()
         clear_all_online()
-        socket.emit("change-room", {current_room: current_room, new_room: room_name})
+        socket.emit("change-room", {current_room: current_room, new_room: room_name, deleting_room: deleting_room})
         current_room = room_name
     }
 }
@@ -313,7 +381,7 @@ socket.on("room-settings-remove-room", (room_name) => {
     for (let i = 0; i < rooms.length; i++) {
         if (rooms[i].innerText === room_name) {
             sidebar.removeChild(rooms[i])
-            enter_room_name("general")
+            enter_room_name("general", true)
             return
         }
     }

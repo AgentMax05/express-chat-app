@@ -105,34 +105,45 @@ function toggle_right_sidebar() {
     let right_sidebar = document.querySelector("#right_sidebar")
     let main_container = document.querySelector("#container")
     let top_bar = document.querySelector("#room_info")
+    let other_messages = document.querySelectorAll(".message_container_other")
 
-    let current_display = getComputedStyle(right_sidebar).display
-    if (current_display === "none") {
+    //let current_display = getComputedStyle(right_sidebar).display
+    let current_display = getComputedStyle(right_sidebar).width
+    if (current_display === "0px") {
         right_sidebar.style.display = "block"
+        right_sidebar.style.width = "200px"
         main_container.style.gridTemplateColumns = "200px calc(100vw - 530px) 130px 200px"
         top_bar.style.width = "calc(100vw - 400px)"
+        for (let i = 0; i < other_messages.length; i++) {
+            other_messages[i].style.maxWidth = "calc((75 / 100) * (100vw - 400px))"
+        }
     }
     else {
-        right_sidebar.style.display = "none"
-        main_container.style.gridTemplateColumns = "200px calc(100vw - 330px) 130px"
+        //right_sidebar.style.display = "none"
+        right_sidebar.style.width = "0px"
+        main_container.style.gridTemplateColumns = "200px calc(100vw - 330px) 130px 0px"
         top_bar.style.width = "calc(100vw - 200px)"
+        for (let i = 0; i < other_messages.length; i++) {
+            other_messages[i].style.maxWidth = "calc((75 / 100) * (100vw - 200px))"
+        }
     }
 }
 
-// window.onresize = check_sidebar_display
+// leave room function:
 
-// function check_sidebar_display() {
-//     let container = document.querySelector("#container")
-//     let right_sidebar = document.querySelector("#right_sidebar")
-//     if (window.innerWidth > 1300 && right_sidebar.style.display === "none") {
-//         console.log("making sidebar larger")
-//         right_sidebar.style.display = "block"
-//         document.querySelector("#container").style.gridTemplatecolumns = "200px calc(100vw - 530px) 130px 200px"
-//     }
-//     else if (window.innerWidth > 1300 && container.style.gridTemplateColumns !== "200px calc(100vw - 530px) 130px 200px") {
-//         container.style.gridTemplateColumns = document.querySelector("#container").style.gridTemplatecolumns = "200px calc(100vw - 530px) 130px 200px"
-//     }
-// }
+function settings_leave_room() {
+    if (current_room !== "general") {
+        socket.emit("room-settings-remove-users", {users_to_remove: user, room_name: current_room})
+    }
+}
+
+// delete room function:
+
+function settings_delete_room() {
+    if (current_room !== "general") {
+        socket.emit("room-settings-delete-room", current_room)
+    }
+}
 
 // miscellaneous functions
 
