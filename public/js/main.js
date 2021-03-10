@@ -1,6 +1,7 @@
 let old_date = new Date("January 1, 1975 0:0:0");
 document.cookie = "authentication=; expires=" + old_date.toUTCString()
 
+const submit_button = document.querySelector("#send_button")
 const input_field = document.querySelector("#input")
 let menu_container = document.querySelector("#menu_container")
 let menu = document.querySelector("#create-room-menu")
@@ -104,7 +105,12 @@ socket.on("room-info", (data) => {
 function submit() {
     const msg = input_field.value 
     
-    if (msg != "") {
+    if (msg.length > 200) {
+        input_field.value = ""
+        invalid(input_field, 500)
+    }
+
+    else if (msg != "") {
         input_field.value = ""
         socket.emit("chat-message", {id: self_id, message: msg, room_name: current_room})
     }

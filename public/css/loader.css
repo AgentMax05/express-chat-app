@@ -1,3 +1,8 @@
+:root {
+    /* --animation-curve: cubic-bezier(.5,-0.5,.5,1.5); */
+    --animation-curve: linear;
+}
+
 #loader_div {
     position: absolute;
     top: 0px;
@@ -23,8 +28,10 @@
     width: 150px;
     height: 150px;
     border-radius: 100%;
-    animation: spin 1s cubic-bezier(0.38,-0.57, 0.26, 1.16) infinite;
+    /* animation: spin 1s cubic-bezier(0.38,-0.57, 0.26, 1.16) infinite; */
+    /* animation: spin 3s cubic-bezier(.5,-0.5,.5,1.5) infinite; */
     position: absolute;
+    transition: transform 0.1s ease;
 }
 
 #loader2 {
@@ -38,10 +45,12 @@
     width: 132px;
     height: 132px;
     border-radius: 100%;
-    animation: spin 1.5s cubic-bezier(0.38,-0.57, 0.26, 1.16) infinite;
+    /* animation: spin 1.5s cubic-bezier(0.38,-0.57, 0.26, 1.16) infinite; */
+    /* animation: spin 1.5s cubic-bezier(.5,-0.5,.5,1.5) infinite; */
     position: absolute;
+    transition: transform 0.1s ease;
 }
-/* 
+
 #loader3 {
     content: "";
     z-index: 11;
@@ -50,12 +59,30 @@
     border: 6px solid rgb(80, 80, 80);
     border-top: 6px solid rgb(30, 30, 30);
     display: block;
-    width: 126px;
-    height: 126px;
+    width: 118px;
+    height: 118px;
     border-radius: 100%;
-    animation: spin 3s cubic-bezier(.04,1.58,.82,-0.16) infinite;
+    /* animation: spin 3s cubic-bezier(.04,1.58,.82,-0.16) infinite; */
+    /* animation: spin 1s cubic-bezier(.5,-0.5,.5,1.5) infinite; */
     position: absolute;
-} */
+    transition: transform 0.1s ease;
+}
+
+.regular_animation1 {
+    animation: spin 3s var(--animation-curve) 1;
+}
+
+.regular_animation2 {
+    animation: spin 1.5s var(--animation-curve) 2;
+}
+
+.regular_animation3 {
+    animation: spin 1s var(--animation-curve) 3;
+}
+
+.alternate_animation {
+    animation: spin 1.5s var(--animation-curve) 2;
+}
 
 @keyframes spin {
     0% {transform: rotate(0deg);}

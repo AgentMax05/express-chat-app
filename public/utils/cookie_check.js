@@ -1,5 +1,6 @@
 let finished_loading = false
 let finished_loading_messages = false
+let loader_removed = false
 
 function check_cookie() {
     if (!document.cookie === "authentication=true") {

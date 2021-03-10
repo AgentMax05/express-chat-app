@@ -217,15 +217,21 @@ body {
     align-items: center;
     justify-content: center;
     flex-basis: 100%;
-
     margin-top: 20px;
     margin-bottom: 20px;
     margin-left: 50px;
 }
 
+.chat_item p {
+    max-width: 90px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .chat_item:hover {
     transform: scale(1.05);
-    border-radius: 25px;
+    border-radius: 35px;
     background-color:rgb(75, 75, 75);
 }
 
@@ -341,58 +347,6 @@ body {
     justify-self: flex-end;
     font-family: arial;
 }
-/* #active_users {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    background-color:rgb(49, 49, 49);
-    width: 200px;
-    display: block;
-    align-items: flex-start;
-    justify-content: center;
-    height: 300px;
-}
-
-#online_users_text {
-    color: white;
-    font-size: 100%;
-    margin-top: 10px;
-}
-
-#centering {
-    display: flex;
-    height: 16px;
-    width: 200px;
-    justify-content: center;
-}
-
-#users_container {
-    display: block;
-    overflow-y: scroll;
-    width: 200px;
-    margin-top: 10px;
-    height: 250px;
-}
-
-#users_container::-webkit-scrollbar {
-    display: none;
-}
-
-.user_object {
-    box-sizing: border-box;
-    width: 180px;
-    height: fit-content;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    margin-left: 10px;
-    margin-right: 10px;
-    background-color: rgb(60, 60, 60);
-    color: white;
-    font-size: 100%;
-    padding-left: 15px;
-    padding-bottom: 5px;
-    padding-top: 5px;
-} */
 
 #add_room {
     display: flex;
@@ -410,6 +364,10 @@ body {
     cursor: pointer;
     user-select: none;
     margin-top: 10px;
+}
+
+#add_room p {
+    font-family: ui-sans-serif;
 }
 
 #add_room:hover {

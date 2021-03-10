@@ -109,6 +109,10 @@ app.get("/utils/remove_loading.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/remove_loading.js"))
 })
 
+app.get("/js/loader.js", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/js/loader.js"))
+})
+
 app.get("/fonts/:font_name", function(req, res) {
     if (fs.existsSync(`./public/fonts/${req.params.font_name}`)) {
         res.sendFile(path.join(__dirname, `/public/fonts/${req.params.font_name}`))
@@ -257,7 +261,7 @@ io.on("connection", function(socket) {
 
         for (let i = 0; i < data.users_to_remove.length; i++) {
             await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: data.room_name}})
-            await rooms_collection.updateOne({name: data.room_name}, {$pull: {users: data.users_to_remove[i]}})
+            await rooms_collection.updateOne({name: data.room_name}, {$pull: {users: data.users_to_remove[i], online_users: data.users_to_remove[i]}})
             let found_user = await users_collection.findOne({username: data.users_to_remove[i]})
             io.to(found_user.current_id).emit("room-settings-remove-room", data.room_name) 
 
@@ -509,7 +513,7 @@ async function create_room(room_name, room_users) {
         }
     }
 
-    await rooms_collection.insertOne({name: room_name, "users": real_users, online_users: []}, (err, res) => {
+    await rooms_collection.insertOne({name: room_name, display_name: room_name, "users": real_users, online_users: []}, (err, res) => {
         if (err) {
             console.error(err)
             return
@@ -568,4 +572,8 @@ async function delete_room(room_name) {
     }
     await messages_collection.deleteOne({name: room_name})
     await rooms_collection.deleteOne({name: room_name})
+}
+
+async function remove_user_from_online(user) {
+    await rooms_collection.updateOne({name: user.current_room}, {$pull: {}})
 }

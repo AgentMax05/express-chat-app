@@ -1,7 +1,6 @@
 const room_settings_menu_container = document.querySelector("#room_settings_container")
 const add_user_container = document.querySelector("#room_settings_add_user_container")
 const remove_user_container = document.querySelector("#room_settings_remove_user_container")
-const delete_room_container = document.querySelector("#room_settings_remove_room_container")
 
 let users_to_remove = []
 
@@ -91,13 +90,6 @@ socket.on("room-settings-remove-room-user", (username) => {
         }
     }
 })
-
-// delete room functions
-
-function settings_delete_room() {
-    room_settings_menu_container.style.display = "block"
-    delete_room_container.style.display = "grid"
-}
 
 // toggle right sidebar when button is clicked
 
