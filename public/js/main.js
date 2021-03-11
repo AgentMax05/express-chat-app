@@ -9,8 +9,9 @@ let menu_children = Array.from(menu.children)
 
 const socket = io()
 
+let general_id;
 let self_id;
-let current_room = "general"
+let current_room = {room_name: "general"}
 
 const params = new URLSearchParams(window.location.search)
 
@@ -70,15 +71,21 @@ socket.on("redirect_command", function(url) {
 })
 
 socket.on("login-confirmation", function(returned_user) {
-    socket.emit("message-request", {room_name: current_room})
-    returned_user.rooms.forEach((room_name) => {
-        add_room(room_name)
+    general_id = returned_user.general_id
+    current_room.room_id = general_id
+    console.log(`current_room is: ${JSON.stringify(current_room)}`)
+
+    socket.emit("message-request", {room_id: current_room.room_id})
+
+    returned_user.rooms.forEach((room_data) => {
+        add_room(room_data.room_name, room_data.room_id)
     })
+
     set_logged_in_as(user)
 })
 
-socket.on("add_room", function(room_name) {
-    add_room(room_name)
+socket.on("add_room", function(room_data) {
+    add_room(room_data.room_name, room_data.room_id)
 })
 
 socket.on("add_online_users", function(users_list) {
@@ -112,7 +119,7 @@ function submit() {
 
     else if (msg != "") {
         input_field.value = ""
-        socket.emit("chat-message", {id: self_id, message: msg, room_name: current_room})
+        socket.emit("chat-message", {id: self_id, message: msg, room_id: current_room.room_id})
     }
 }
 
@@ -214,13 +221,31 @@ function outputOtherMessage(message, user_from) {
 let sidebar = document.querySelector("#sidebar")
 
 function enter_room(event_obj) {
-    let room_name = event_obj.target.innerText
-    if (room_name !== current_room) {
+
+    let switched = null
+    if (!event_obj.target.classList.contains("chat_item")) {
+        switched = event_obj.target.parentElement
+    }
+
+    let room_name;
+    let room_id;
+
+    if (!switched) {
+        room_name = event_obj.target.innerText
+        room_id = event_obj.target.getAttribute("room_id")
+    }
+    if (switched) {
+        room_name = switched.innerText
+        room_id = switched.getAttribute("room_id")
+    }
+    console.log(`room_id: ${room_id}`)
+    if (room_id !== current_room.room_id) {
         // console.log(`switching rooms to ${room_name}_`)
         clear_messages()
         clear_all_online()
-        socket.emit("change-room", {current_room: current_room, new_room: room_name, deleting_room: false})
-        current_room = room_name
+        socket.emit("change-room", {current_room: current_room, new_room: {room_name: room_name, room_id: room_id}, deleting_room: false})
+        current_room = {room_name: room_name, room_id: room_id}
+        console.log(`current_room: ${JSON.stringify(current_room)}`)
     }
 }
 
@@ -240,10 +265,11 @@ function clear_messages() {
     }
 }
 
-function add_room(name) {
+function add_room(name, room_id) {
     // sidebar.style.gridTemplateRows = `${window.getComputedStyle(sidebar).gridTemplateRows} 100px`
     let new_div = document.createElement("div")
     new_div.className = "chat_item"
+    new_div.setAttribute("room_id", room_id)
     let new_text = document.createElement("p")
     new_text.innerHTML = name
     new_text.style.userSelect = "none"

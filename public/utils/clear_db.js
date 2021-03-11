@@ -9,7 +9,8 @@ mongo.connect("mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTop
     database.collection("rooms").deleteMany({}, (err, obj) => {if (err) {console.error(error); return;}})
     database.collection("messages").deleteMany({}, (err, obj) => {if (err) {console.error(error); return;}})
     database.collection("users").deleteMany({}, (err, obj) => {if (err) {console.error(error); return;}})
-    await database.collection("rooms").insertOne({name: "general", display_name: "general", users: [], online_users: []})
-    await database.collection("messages").insertOne({name: "general", messages: []})
+    let general_room = {name: "general", display_name: "general", users: [], online_users: []}
+    await database.collection("rooms").insertOne(general_room)
+    await database.collection("messages").insertOne({_id: general_room._id, name: "general", messages: []})
     client.close()
 })
