@@ -328,6 +328,18 @@ function log_in_user(user, id) {
     }
 }
 
+
+async function set_id_encryption(user, real_id) {
+    let found_user = await users_collection.findOne({username: user})
+    let new_id = new ObjectID()
+    while (found_user.encryptions.hasOwnProperty(new_id)) {
+        new_id = new ObjectID()
+    }
+    await users_collection.updateOne({username: user}, {$push: {encryptions: {new_id, real_id}}})
+    return new_id
+}
+
+
 function in_expected_logins(user) {
     for (let i = 0; i < expected_logins.length; i++) {
 
