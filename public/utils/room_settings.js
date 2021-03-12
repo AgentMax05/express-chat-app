@@ -55,7 +55,7 @@ function settings_remove_user() {
     remove_children(remove_user_container.querySelector("#room_settings_remove_user_list"))
     room_settings_menu_container.style.display = "block"
     remove_user_container.style.display = "grid"
-    socket.emit("room-settings-user-request", current_room)
+    socket.emit("room-settings-user-request", current_room.room_id)
 }
 
 function room_settings_remove_user(username, div) {
@@ -77,7 +77,7 @@ function room_settings_remove_user_exit() {
 }
 
 function room_settings_remove_user_submit() {
-    socket.emit("room-settings-remove-users", {users_to_remove: users_to_remove, room_name: current_room})
+    socket.emit("room-settings-remove-users", {users_to_remove: users_to_remove, room_name: current_room.room_name, room_id: current_room.room_id})
 }
 
 socket.on("room-settings-remove-room-user", (username) => {
@@ -125,14 +125,14 @@ function toggle_right_sidebar() {
 
 function settings_leave_room() {
     if (current_room !== "general") {
-        socket.emit("room-settings-remove-users", {users_to_remove: user, room_name: current_room})
+        socket.emit("room-settings-remove-users", {users_to_remove: user, room_name: current_room.room_name, room_id: current_room.room_id})
     }
 }
 
 // delete room function:
 
 function settings_delete_room() {
-    if (current_room !== "general") {
+    if (current_room.room_id !== general_id) {
         socket.emit("room-settings-delete-room", current_room)
     }
 }

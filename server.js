@@ -43,6 +43,9 @@ mongo.connect(mongo_url, {useNewUrlParser: true, useUnifiedTopology: true}, asyn
         users = items
         console.log("users received from database")
     })
+
+    // CHANGE GENERAL ROOM TO SEARCH FOR _ID OF GENERAL ROOM HERE
+
     let general_room = await rooms_collection.findOne({name: "general"})
     general_id = general_room._id
     server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
@@ -186,9 +189,9 @@ io.on("connection", function(socket) {
         let found_user = await users_collection.findOne({username: user.username})
         users_room = found_user.current_room
 
-        await rooms_collection.updateOne({name: users_room}, {$pull: {online_users: found_user.username}})
+        await rooms_collection.updateOne({_id: ObjectID(users_room.room_id)}, {$pull: {online_users: found_user.username}})
 
-        let users_room_online = await rooms_collection.findOne({name: users_room})
+        let users_room_online = await rooms_collection.findOne({_id: ObjectID(users_room.room_id)})
         users_room_online = users_room_online.online_users
 
         for (let i = 0; i < users_room_online.length; i++) {
@@ -233,8 +236,6 @@ io.on("connection", function(socket) {
 
     socket.on("change-room", async (data) => {
 
-        console.log(`data is: ${JSON.stringify(data)}`)
-
         let found_user = await find_user_by_id(socket.id)
     
         console.log(`${found_user.username} is changing rooms to ${data.new_room.room_name}`)
@@ -250,8 +251,8 @@ io.on("connection", function(socket) {
         create_room(data.room_name, data.users)
     })
 
-    socket.on("room-settings-user-request", async (room_name) => {
-        let found_room = await rooms_collection.findOne({name: room_name})
+    socket.on("room-settings-user-request", async (room_id) => {
+        let found_room = await rooms_collection.findOne({_id: ObjectID(room_id)})
         socket.emit("room-settings-user-response", found_room.users)
     })
 
@@ -260,14 +261,14 @@ io.on("connection", function(socket) {
     })
 
     socket.on("room-settings-remove-users", async (data) => {
-        let found_room = await rooms_collection.findOne({name: data.room_name}) // check this line
+        let found_room = await rooms_collection.findOne({_id: ObjectID(data.room_id)}) // check this line
         let room_users = found_room.online_users
 
         for (let i = 0; i < data.users_to_remove.length; i++) {
-            await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: data.room_name}})
-            await rooms_collection.updateOne({name: data.room_name}, {$pull: {users: data.users_to_remove[i], online_users: data.users_to_remove[i]}})
+            await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: {room_id: ObjectID(data.room_id)}}})
+            await rooms_collection.updateOne({_id: ObjectID(data.room_id)}, {$pull: {users: data.users_to_remove[i], online_users: data.users_to_remove[i]}})
             let found_user = await users_collection.findOne({username: data.users_to_remove[i]})
-            io.to(found_user.current_id).emit("room-settings-remove-room", data.room_name) 
+            io.to(found_user.current_id).emit("room-settings-remove-room", data.room_id) 
 
             for (let ii = 0; ii < room_users.length; ii++) { //check these lines:
                 //console.log(`sending to ${room_users[ii]}, remove user is ${found_user.username}`)
@@ -279,14 +280,14 @@ io.on("connection", function(socket) {
             }
         }
 
-        let refound_room = await rooms_collection.findOne({name: data.room_name})
+        let refound_room = await rooms_collection.findOne({_id: ObjectID(data.room_id)})
         if (refound_room.users.length === 0) {
-            await delete_room(data.room_name)
+            await delete_room(data.room_id, data.room_name)
         }
     })
 
-    socket.on("room-settings-delete-room", async (room_name) => {
-        await delete_room(room_name)
+    socket.on("room-settings-delete-room", async (data) => {
+        await delete_room(data.room_id, data.room_name)
     })
 
 })
@@ -360,6 +361,7 @@ async function leave_room(room_id, username) {
 }
 
 async function join_room(room_id, username) {
+    console.log(`finding room with id ${room_id}`)
     let room_users = await rooms_collection.findOne({_id: ObjectID(room_id)})
     await users_collection.updateOne({"username": username}, {$set: {current_room: {room_name: room_users.name, room_id: room_users._id}}})
     let joining_user = await users_collection.findOne({"username": username})
@@ -483,9 +485,9 @@ async function add_user(data) {
     users.push(new_user)
     users_collection.insertOne(new_user)
     console.log(`New user created: [username: ${new_user.username}, password: ${new_user.password}]`)
-    rooms_collection.updateOne({name: "general"}, {$addToSet: {users: new_user.username}})
+    rooms_collection.updateOne({_id: ObjectID(general_id)}, {$addToSet: {users: new_user.username}})
 
-    let general_room = await rooms_collection.findOne({name: "general"})
+    let general_room = await rooms_collection.findOne({_id: ObjectID(general_id)})
     let general_room_users = general_room.online_users
     for (let i = 0; i < general_room_users.length; i++) {
         let found_user = await users_collection.findOne({username: general_room_users[i]})
@@ -565,25 +567,21 @@ async function add_user_into_room(username, room_name, room_id) {
     }    
 }
 
-async function delete_room(room_name) {
+async function delete_room(room_id, room_name) {
     console.log("deleting room")
-    let found_room = await rooms_collection.findOne({name: room_name})
+    let found_room = await rooms_collection.findOne({_id: ObjectID(room_id)})
     for (let i = 0; i < found_room.users.length; i++) {
         console.log("pulling" + room_name)
         await users_collection.updateOne({username: found_room.users[i]}, {$pull: {rooms: room_name}})
         let found_user = await users_collection.findOne({username: found_room.users[i]})
         if (found_user.current_id !== null) {
             console.log("emitting")
-            io.to(found_user.current_id).emit("room-settings-remove-room", room_name)
+            io.to(found_user.current_id).emit("room-settings-remove-room", room_id)
         }
         else {
             console.log(`found_user current id is ${found_user.current_id}`)
         }
     }
-    await messages_collection.deleteOne({name: room_name})
-    await rooms_collection.deleteOne({name: room_name})
-}
-
-async function remove_user_from_online(user) {
-    await rooms_collection.updateOne({name: user.current_room}, {$pull: {}})
+    await messages_collection.deleteOne({_id: ObjectID(room_id)})
+    await rooms_collection.deleteOne({_id: ObjectID(room_id)})
 }
