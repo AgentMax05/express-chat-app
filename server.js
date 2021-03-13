@@ -22,6 +22,8 @@ let rooms_collection;
 const PORT = process.env.PORT || 3000
 let general_id;
 
+let home_url = "http://localhost:3000"
+
 // mondodb connection
 
 mongo.connect(mongo_url, {useNewUrlParser: true, useUnifiedTopology: true}, async (error, client) => {
@@ -135,17 +137,16 @@ io.on("connection", function(socket) {
     // Broadcast when a user connects
 
     socket.on("login-connection", async function(data) {
-        console.log(`attempted login for ${data.username}`)
         let found_user = await find_user(data.username)
         if (found_user === null) {
-            socket.emit("redirect_command", "http://localhost:3000")
+            socket.emit("redirect_command", home_url)
             return
         }
 
         let log_in_result = log_in_user(found_user, data.id)
 
         if (!log_in_result) {
-            socket.emit("redirect_command", "http://localhost:3000")
+            socket.emit("redirect_command", home_url)
             console.log(`${data.username} login attempt denied`)
         }
         else {
@@ -237,7 +238,15 @@ io.on("connection", function(socket) {
     socket.on("change-room", async (data) => {
 
         let found_user = await find_user_by_id(socket.id)
-    
+        let room_check = await users_collection.findOne({rooms: {$elemMatch: {room_name: data.new_room.room_name, room_id: ObjectID(data.new_room.room_id)}}})
+        if (room_check === null) {
+            console.log(`${found_user.username} tried to join a different room`)
+            socket.emit("redirect_command", home_url)
+            leave_room(data.current_room.room_id, found_user.username)
+            log_out_user(found_user.username)
+            return
+        }
+
         console.log(`${found_user.username} is changing rooms to ${data.new_room.room_name}`)
         
         if (!data.deleting_room) {
@@ -308,7 +317,6 @@ async function emit_to_in_room(message_name, room_id, message) {
 }
 
 async function send_room_messages(user_id, room_id) {
-    console.log(`fetching messages in ${room_id}`)
     let room_messages = await messages_collection.findOne({_id: ObjectID(room_id)})
     // console.log(room_messages.messages)
     io.to(user_id).emit("message-answer", room_messages.messages.concat(["$${{||}}$$"]))
@@ -327,18 +335,6 @@ function log_in_user(user, id) {
         return false
     }
 }
-
-
-async function set_id_encryption(user, real_id) {
-    let found_user = await users_collection.findOne({username: user})
-    let new_id = new ObjectID()
-    while (found_user.encryptions.hasOwnProperty(new_id)) {
-        new_id = new ObjectID()
-    }
-    await users_collection.updateOne({username: user}, {$push: {encryptions: {new_id, real_id}}})
-    return new_id
-}
-
 
 function in_expected_logins(user) {
     for (let i = 0; i < expected_logins.length; i++) {
@@ -373,7 +369,6 @@ async function leave_room(room_id, username) {
 }
 
 async function join_room(room_id, username) {
-    console.log(`finding room with id ${room_id}`)
     let room_users = await rooms_collection.findOne({_id: ObjectID(room_id)})
     await users_collection.updateOne({"username": username}, {$set: {current_room: {room_name: room_users.name, room_id: room_users._id}}})
     let joining_user = await users_collection.findOne({"username": username})
@@ -580,18 +575,13 @@ async function add_user_into_room(username, room_name, room_id) {
 }
 
 async function delete_room(room_id, room_name) {
-    console.log("deleting room")
+    console.log(`deleting room: ${room_name}`)
     let found_room = await rooms_collection.findOne({_id: ObjectID(room_id)})
     for (let i = 0; i < found_room.users.length; i++) {
-        console.log("pulling" + room_name)
         await users_collection.updateOne({username: found_room.users[i]}, {$pull: {rooms: room_name}})
         let found_user = await users_collection.findOne({username: found_room.users[i]})
         if (found_user.current_id !== null) {
-            console.log("emitting")
             io.to(found_user.current_id).emit("room-settings-remove-room", room_id)
-        }
-        else {
-            console.log(`found_user current id is ${found_user.current_id}`)
         }
     }
     await messages_collection.deleteOne({_id: ObjectID(room_id)})

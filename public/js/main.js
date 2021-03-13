@@ -15,8 +15,10 @@ let current_room = {room_name: "general"}
 
 const params = new URLSearchParams(window.location.search)
 
+let home_url = "http://localhost:3000"
+
 if (!params.has("user")) {
-    window.location.href = "http://localhost:3000"
+    window.location.href = home_url
 }
 
 const user = params.get("user")

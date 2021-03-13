@@ -4,6 +4,8 @@ const password_check_input = document.querySelector("#password_check")
 
 const socket = io()
 
+let home_url = "http://localhost:3000"
+
 username_input.addEventListener("keypress", function(key) {
     if (key.keyCode === 13) {
         submit()
@@ -54,7 +56,7 @@ socket.on("signup-result", function(result) {
         valid(password_input, 1500)
         valid(password_check_input, 1500)
         setTimeout(() => {
-           window.location.href = "http://localhost:3000" 
+           window.location.href = home_url
         }, 2000)
     }
     else {
@@ -80,5 +82,5 @@ function valid(element, delay) {
 }
 
 function login_page() {
-    window.location.href = "http://localhost:3000"
+    window.location.href = home_url
 }

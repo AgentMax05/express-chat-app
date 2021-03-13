@@ -3,6 +3,8 @@ const password_input = document.querySelector("#password")
 
 const socket = io()
 
+let home_url = "http://localhost:3000"
+
 username_input.addEventListener("keypress", function(key) {
     if (key.keyCode === 13) {
         submit()
@@ -41,7 +43,7 @@ function invalid(element, delay) {
 socket.on("login-result", function(result) {
     if (result.result) {
         add_cookie("authentication", "true", 30)
-        window.location.href = `http://localhost:3000/chat.html?user=${result.username}`
+        window.location.href = `${home_url}/chat.html?user=${result.username}`
         console.log("correct login")
     }
     else {
@@ -58,5 +60,5 @@ function add_cookie(name, value, seconds) {
 }
 
 function signup_page() {
-    window.location.href = "http://localhost:3000/sign-up.html"
+    window.location.href = `${home_url}/sign-up.html`
 }
