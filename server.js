@@ -156,7 +156,7 @@ io.on("connection", function(socket) {
             return
         }
 
-        let log_in_result = log_in_user(found_user, socket.id)
+        let log_in_result = await log_in_user(found_user, socket.id)
 
         if (!log_in_result) {
             socket.emit("redirect_command", home_url)
@@ -166,7 +166,7 @@ io.on("connection", function(socket) {
             console.log(`${data.username} login attempt accepted with id ${socket.id}`)
             // socket.broadcast.emit("message", {id: 3, message: `${data.username} has joined the chat`})
             //socket.emit("login-confirmation", find_user_by_id_for_confirmation(socket.id))
-            send_login_confirmation(socket.id)
+            await send_login_confirmation(socket.id)
             join_room(general_id, data.username)
         }
         
@@ -335,10 +335,10 @@ async function send_room_messages(user_id, room_id) {
     io.to(user_id).emit("message-answer", room_messages.messages.concat(["$${{||}}$$"]))
 }
 
-function log_in_user(user, id) {
+async function log_in_user(user, id) {
 
     if (user.status === false && in_expected_logins(user)) {
-        users_collection.updateOne({username: user.username}, {$set : {current_id: id, current_room: {room_name: "general", room_id: general_id}, status: true}})
+        await users_collection.updateOne({username: user.username}, {$set : {current_id: id, current_room: {room_name: "general", room_id: general_id}, status: true}})
         return true
     }
     else {
