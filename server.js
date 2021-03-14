@@ -135,6 +135,10 @@ app.get("/utils/signup_listener.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/signup_listener.js"))
 })
 
+app.get("/utils/body_load.js", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/utils/body_load.js"))
+})
+
 app.get("/fonts/:font_name", function(req, res) {
     if (fs.existsSync(`./public/fonts/${req.params.font_name}`)) {
         res.sendFile(path.join(__dirname, `/public/fonts/${req.params.font_name}`))
