@@ -162,14 +162,14 @@ io.on("connection", function(socket) {
             return
         }
 
-        let log_in_result = log_in_user(found_user, data.id)
+        let log_in_result = log_in_user(found_user, socket.id)
 
         if (!log_in_result) {
             socket.emit("redirect_command", home_url)
             console.log(`${data.username} login attempt denied`)
         }
         else {
-            console.log(`${data.username} login attempt accepted`)
+            console.log(`${data.username} login attempt accepted with id ${socket.id}`)
             // socket.broadcast.emit("message", {id: 3, message: `${data.username} has joined the chat`})
             //socket.emit("login-confirmation", find_user_by_id_for_confirmation(socket.id))
             send_login_confirmation(socket.id)
@@ -459,7 +459,7 @@ async function find_user_by_id(id) {
 }
 
 async function send_login_confirmation(user_id) {
-    let found_user = await users_collection.findOne({current_id: user_id})
+    let found_user = await users_collection.findOne({"current_id": user_id})
     io.to(user_id).emit("login-confirmation", {rooms: found_user.rooms, general_id: general_id})
 }
 

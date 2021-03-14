@@ -23,5 +23,4 @@ elements = [
 
 for (let i = 0; i < elements.length; i++) {
     add_onclick(document.querySelector(elements[i][0]), elements[i][1])
-    console.log("passed: " + i.toString())
 }
