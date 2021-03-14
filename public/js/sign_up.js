@@ -2,9 +2,9 @@ const username_input = document.querySelector("#username")
 const password_input = document.querySelector("#password")
 const password_check_input = document.querySelector("#password_check")
 
-const socket = io()
+const socket = io("http://maxvek.com", {path: "/chat/socket.io"})
 
-let home_url = "http://maxvek.com"
+let home_url = "http://maxvek.com/chat"
 
 username_input.addEventListener("keypress", function(key) {
     if (key.keyCode === 13) {

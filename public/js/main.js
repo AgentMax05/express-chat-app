@@ -7,7 +7,7 @@ let menu_container = document.querySelector("#menu_container")
 let menu = document.querySelector("#create-room-menu")
 let menu_children = Array.from(menu.children)
 
-const socket = io()
+const socket = io("http://maxvek.com", {path: "/chat/socket.io"})
 
 let general_id;
 let self_id;

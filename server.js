@@ -13,7 +13,7 @@ const app = express()
 app.use(helmet())
 
 const server = http.createServer(app)
-const io = socketio(server)
+const io = socketio(server, {path: "/chat/socket.io"})
 
 let active_users = []
 let expected_logins = []
@@ -24,7 +24,9 @@ let rooms_collection;
 const PORT = process.env.PORT || 3000
 let general_id;
 
-let home_url = "http://maxvek.com"
+let home_url = "http://maxvek.com/chat"
+
+let current_path = "/chat"
 
 // mondodb connection
 
@@ -51,87 +53,87 @@ mongo.connect(mongo_url, {useNewUrlParser: true, useUnifiedTopology: true}, asyn
 // Set static folder
 // app.use(express.static(path.join(__dirname, "public")))
 
-app.get("/", function(req, res) {
+app.get(current_path + "/", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/index.html"))
 })
 
-app.get("/css/login.css", function(req, res) {
+app.get(current_path + "/css/login.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/login.css"))
 })
 
-app.get("/js/login.js", function(req, res) {
+app.get(current_path + "/js/login.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/js/login.js"))
 })
 
-app.get("/chat.html", function(req, res) {
+app.get(current_path + "/chat.html", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/chat.html"))
 })
 
-app.get("/css/style.css", function(req, res) {
+app.get(current_path + "/css/style.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/style.css"))
 })
 
-app.get("/js/main.js", function(req, res) {
+app.get(current_path + "/js/main.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/js/main.js"))
 })
 
-app.get("/images/chat_app_icon2.png", function(req, res) {
+app.get(current_path + "/images/chat_app_icon2.png", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/images/chat_app_icon2.png"))
 })
 
-app.get("/sign-up.html", function(req, res) {
+app.get(current_path + "/sign-up.html", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/sign-up.html"))
 })
 
-app.get("/js/sign_up.js", function(req, res) {
+app.get(current_path + "/js/sign_up.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/js/sign_up.js"))
 })
 
-app.get("/css/sign_up.css", function(req, res) {
+app.get(current_path + "/css/sign_up.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/sign_up.css"))
 })
 
-app.get("/utils/cookie_check.js", function(req, res) {
+app.get(current_path + "/utils/cookie_check.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/cookie_check.js"))
 })
 
-app.get("/utils/room_settings.js", function(req, res) {
+app.get(current_path + "/utils/room_settings.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/room_settings.js"))
 })
 
-app.get("/css/room_settings.css", function(req, res) {
+app.get(current_path + "/css/room_settings.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/room_settings.css"))
 })
 
-app.get("/css/loader.css", function(req, res) {
+app.get(current_path + "/css/loader.css", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/css/loader.css"))
 })
 
-app.get("/utils/remove_loading.js", function(req, res) {
+app.get(current_path + "/utils/remove_loading.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/remove_loading.js"))
 })
 
-app.get("/js/loader.js", function(req, res) {
+app.get(current_path + "/js/loader.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/js/loader.js"))
 })
 
-app.get("/utils/main_listener.js", function(req, res) {
+app.get(current_path + "/utils/main_listener.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/main_listener.js"))
 })
 
-app.get("/utils/login_listener.js", function(req, res) {
+app.get(current_path + "/utils/login_listener.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/login_listener.js"))
 })
 
-app.get("/utils/signup_listener.js", function(req, res) {
+app.get(current_path + "/utils/signup_listener.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/signup_listener.js"))
 })
 
-app.get("/utils/body_load.js", function(req, res) {
+app.get(current_path + "/utils/body_load.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/utils/body_load.js"))
 })
 
-app.get("/fonts/:font_name", function(req, res) {
+app.get(current_path + "/fonts/:font_name", function(req, res) {
     if (fs.existsSync(`./public/fonts/${req.params.font_name}`)) {
         res.sendFile(path.join(__dirname, `/public/fonts/${req.params.font_name}`))
     }
