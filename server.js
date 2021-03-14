@@ -142,6 +142,10 @@ app.get(current_path + "/fonts/:font_name", function(req, res) {
     }
 })
 
+app.get("*", function(req, res) {
+    res.status(404).sendFile("/var/www/errors/error_404.html")
+})
+
 // Run when a client connects
 io.on("connection", function(socket) {
 
