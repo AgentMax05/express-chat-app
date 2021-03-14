@@ -20,7 +20,9 @@
 
     </head>
     <body onload="check_cookie()">
-        
+    <script>
+        document.body.addEventListener("load", () => {check_cookie()})
+    </script>
         <div id="loader_div">
             <div id="loader"></div>
             <div id="loader2"></div>

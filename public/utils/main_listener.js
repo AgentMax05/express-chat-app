@@ -11,7 +11,7 @@ elements = [
     ["#room_settings_add_user_button", room_settings_add_user_submit],
     ["#room_settings_add_user_exit", room_settings_add_user_exit],
     ["#room_settings_remove_user_exit", room_settings_remove_user_exit],
-    ["room_settings_remove_user_submit", room_settings_remove_user_submit],
+    ["#room_settings_remove_user_submit", room_settings_remove_user_submit],
     ["#right_sidebar_button_container", toggle_right_sidebar],
     ["#add_room", create_room],
     ["#manage_users_add", settings_add_user],
@@ -23,4 +23,5 @@ elements = [
 
 for (let i = 0; i < elements.length; i++) {
     add_onclick(document.querySelector(elements[i][0]), elements[i][1])
+    console.log("passed: " + i.toString())
 }
