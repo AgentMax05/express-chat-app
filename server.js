@@ -293,6 +293,7 @@ io.on("connection", function(socket) {
         for (let i = 0; i < data.users_to_remove.length; i++) {
             await users_collection.updateOne({username: data.users_to_remove[i]}, {$pull: {rooms: {room_id: ObjectID(data.room_id)}}})
             await rooms_collection.updateOne({_id: ObjectID(data.room_id)}, {$pull: {users: data.users_to_remove[i], online_users: data.users_to_remove[i]}})
+            console.log(`removing user with name ${data.users_to_remove[i]}`)
             let found_user = await users_collection.findOne({username: data.users_to_remove[i]})
             io.to(found_user.current_id).emit("room-settings-remove-room", data.room_id) 
 
@@ -384,7 +385,7 @@ async function leave_room(room_id, username) {
 
 async function join_room(room_id, username) {
     let room_users = await rooms_collection.findOne({_id: ObjectID(room_id)})
-    await users_collection.updateOne({"username": username}, {$set: {current_room: {room_name: room_users.name, room_id: room_users._id}}})
+    await users_collection.updateOne({"username": username}, {$set: {current_room: {room_name: room_users.name, room_id: ObjectID(room_users._id)}}})
     let joining_user = await users_collection.findOne({"username": username})
     io.to(joining_user.current_id).emit("room-info", {"room_name": room_users.name, users: room_users.users})
 
@@ -405,12 +406,17 @@ async function join_room(room_id, username) {
     }
 }
 
-function in_active_users_username(username) {
-    for (let i = 0; i < active_users.length; i++) {
-        user = active_users[i]
-        if (user.username === username) {
-            return true
-        }
+async function in_active_users_username(username) {
+    // for (let i = 0; i < active_users.length; i++) {
+    //     user = active_users[i]
+    //     if (user.username === username) {
+    //         return true
+    //     }
+    // }
+
+    let found_user = await users_collection.findOne({username: username})
+    if (found_user.status) {
+        return true
     }
     return false
 }
@@ -543,8 +549,8 @@ async function create_room(room_name, room_users) {
         }
 
         for (let i = 0; i < real_users.length; i++) {
-            if (in_active_users_username(real_users[i])) {
-                await users_collection.updateOne({username: real_users[i]}, {$push: {rooms: {room_name: room_name, room_id: new_room._id}}})
+            await users_collection.updateOne({username: real_users[i]}, {$push: {rooms: {room_name: room_name, room_id: ObjectID(new_room._id)}}})
+            if (await in_active_users_username(real_users[i])) {
                 let found_user = await users_collection.findOne({username: real_users[i]})
                 io.to(found_user.current_id).emit("add_room", {room_name: room_name, room_id: new_room._id})
             }
@@ -572,7 +578,7 @@ async function add_user_into_room(username, room_name, room_id) {
     room_users = found_room.users
 
     if (found_user !== null && room_users.indexOf(username) === -1) {
-        await users_collection.updateOne({"username": username}, {$push : {rooms: room_name}})
+        await users_collection.updateOne({"username": username}, {$push : {rooms: {room_name: room_name, room_id: ObjectID(room_id)}}})
         await rooms_collection.updateOne({_id: ObjectID(room_id)}, {$push : {users: username}})
         
         let users_in_room = await rooms_collection.findOne({_id: ObjectID(room_id)})
@@ -589,14 +595,19 @@ async function add_user_into_room(username, room_name, room_id) {
 
 async function delete_room(room_id, room_name) {
     console.log(`deleting room: ${room_name}`)
+
     let found_room = await rooms_collection.findOne({_id: ObjectID(room_id)})
+
     for (let i = 0; i < found_room.users.length; i++) {
-        await users_collection.updateOne({username: found_room.users[i]}, {$pull: {rooms: room_name}})
+        await users_collection.updateOne({username: found_room.users[i]}, {$pull: {rooms: {room_id: ObjectID(room_id)}}})
+
         let found_user = await users_collection.findOne({username: found_room.users[i]})
+
         if (found_user.current_id !== null) {
             io.to(found_user.current_id).emit("room-settings-remove-room", room_id)
         }
     }
+
     await messages_collection.deleteOne({_id: ObjectID(room_id)})
     await rooms_collection.deleteOne({_id: ObjectID(room_id)})
 }

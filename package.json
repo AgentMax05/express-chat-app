@@ -8,7 +8,8 @@
     "dev": "nodemon server.js",
     "clear-messages": "node ./utils/clear_mongodb_messages.js",
     "clear_db": "node ./utils/clear_db.js",
-    "create_user": "node ./utils/add_user.js"
+    "create_user": "node ./utils/add_user.js",
+    "delete_room": "node ./utils/delete_room.js"
   },
   "author": "",
   "license": "ISC",

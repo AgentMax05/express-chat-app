@@ -125,7 +125,7 @@ function toggle_right_sidebar() {
 
 function settings_leave_room() {
     if (current_room !== "general") {
-        socket.emit("room-settings-remove-users", {users_to_remove: user, room_name: current_room.room_name, room_id: current_room.room_id})
+        socket.emit("room-settings-remove-users", {users_to_remove: [user], room_name: current_room.room_name, room_id: current_room.room_id})
     }
 }
 
