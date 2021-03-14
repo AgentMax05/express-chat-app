@@ -4,7 +4,7 @@ const password_check_input = document.querySelector("#password_check")
 
 const socket = io()
 
-let home_url = "http://localhost:3000"
+let home_url = "http://maxvek.com"
 
 username_input.addEventListener("keypress", function(key) {
     if (key.keyCode === 13) {

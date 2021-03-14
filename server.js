@@ -1,6 +1,7 @@
 const path = require("path")
 const http = require("http")
 const express = require("express")
+const helmet = require("helmet")
 const socketio = require("socket.io")
 const mongo = require("mongodb").MongoClient
 const fs = require("fs")
@@ -9,6 +10,8 @@ const ObjectID = require("mongodb").ObjectID
 const mongo_url = "mongodb://localhost:27017"
 
 const app = express()
+app.use(helmet())
+
 const server = http.createServer(app)
 const io = socketio(server)
 
@@ -22,7 +25,7 @@ let rooms_collection;
 const PORT = process.env.PORT || 3000
 let general_id;
 
-let home_url = "http://localhost:3000"
+let home_url = "http://maxvek.com"
 
 // mondodb connection
 
@@ -118,6 +121,18 @@ app.get("/utils/remove_loading.js", function(req, res) {
 
 app.get("/js/loader.js", function(req, res) {
     res.sendFile(path.join(__dirname, "/public/js/loader.js"))
+})
+
+app.get("/utils/main_listener.js", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/utils/main_listener.js"))
+})
+
+app.get("/utils/login_listener.js", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/utils/login_listener.js"))
+})
+
+app.get("/utils/signup_listener.js", function(req, res) {
+    res.sendFile(path.join(__dirname, "/public/utils/signup_listener.js"))
 })
 
 app.get("/fonts/:font_name", function(req, res) {

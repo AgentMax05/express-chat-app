@@ -15,7 +15,7 @@ let current_room = {room_name: "general"}
 
 const params = new URLSearchParams(window.location.search)
 
-let home_url = "http://localhost:3000"
+let home_url = "http://maxvek.com"
 
 if (!params.has("user")) {
     window.location.href = home_url
