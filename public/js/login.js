@@ -44,7 +44,6 @@ socket.on("login-result", function(result) {
     if (result.result) {
         add_cookie("authentication", "true", 30)
         window.location.href = `${home_url}/chat.html?user=${result.username}`
-        console.log("correct login")
     }
     else {
         invalid(username_input, 3000)

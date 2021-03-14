@@ -59,7 +59,7 @@ function settings_remove_user() {
 }
 
 function room_settings_remove_user(username, div) {
-    console.log(div)
+    // console.log(div)
     if (div.style.backgroundColor != "rgb(200, 60, 60)") {
         users_to_remove.push(username)
         div.style.backgroundColor = "rgb(200, 60, 60)"
@@ -68,7 +68,7 @@ function room_settings_remove_user(username, div) {
         div.style.backgroundColor = "rgb(80, 80, 80)"
         users_to_remove.splice(users_to_remove.indexOf(username), 1)
     }
-    console.log(users_to_remove)
+    // console.log(users_to_remove)
 }
 
 function room_settings_remove_user_exit() {

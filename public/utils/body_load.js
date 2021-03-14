@@ -1,1 +1,1 @@
-document.body.addEventListener("load", () => {check_cookie()})
+window.addEventListener("load", () => {check_cookie()})

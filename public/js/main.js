@@ -75,7 +75,7 @@ socket.on("redirect_command", function(url) {
 socket.on("login-confirmation", function(returned_user) {
     general_id = returned_user.general_id
     current_room.room_id = general_id
-    console.log(`current_room is: ${JSON.stringify(current_room)}`)
+    //console.log(`current_room is: ${JSON.stringify(current_room)}`)
 
     socket.emit("message-request", {room_id: current_room.room_id})
 
@@ -92,7 +92,7 @@ socket.on("add_room", function(room_data) {
 
 socket.on("add_online_users", function(users_list) {
     users_list.forEach((username) => {
-        console.log(`adding ${username}`)
+        // console.log(`adding ${username}`)
         add_online_user(username)
     })
 })
@@ -104,7 +104,7 @@ socket.on("remove_online_user", function(username) {
 
 socket.on("room-info", (data) => {
     // console.log(data)
-    console.log("adding room info")
+    // console.log("adding room info")
     set_info_room_users(data.users)
     if (data.room_name != undefined) {
         set_info_room_name(data.room_name)
@@ -240,14 +240,14 @@ function enter_room(event_obj) {
         room_name = switched.innerText
         room_id = switched.getAttribute("room_id")
     }
-    console.log(`room_id: ${room_id}`)
+    // console.log(`room_id: ${room_id}`)
     if (room_id !== current_room.room_id) {
         // console.log(`switching rooms to ${room_name}_`)
         clear_messages()
         clear_all_online()
         socket.emit("change-room", {current_room: current_room, new_room: {room_name: room_name, room_id: room_id}, deleting_room: false})
         current_room = {room_name: room_name, room_id: room_id}
-        console.log(`current_room: ${JSON.stringify(current_room)}`)
+        // console.log(`current_room: ${JSON.stringify(current_room)}`)
     }
 }
 
@@ -292,7 +292,7 @@ function add_online_user(username) {
     // user_container.appendChild(newuser_obj)
     // console.log("new user added")
 
-    console.log(`adding user ${username}`)
+    // console.log(`adding user ${username}`)
 
     let user_container = document.querySelector("#right_bar_users")
     let container_children = Array.from(user_container.children)
@@ -313,7 +313,7 @@ function clear_all_online() {
 
 function remove_online_user(username) {
 
-    console.log(`removing user ${username}`)
+    // console.log(`removing user ${username}`)
 
     // let current_users = document.getElementsByClassName("user_object")
     // let user_obj = Array.from(current_users).find((element) => {
@@ -395,7 +395,7 @@ function set_info_room_name(room_name) {
 function set_info_room_users(users) {
     let room_users_e = document.querySelector("#right_bar_users")
     users.forEach((user) => {
-        console.log(`adding div for ${user}`)
+        // console.log(`adding div for ${user}`)
         let new_div = document.createElement("div")
         new_div.classList.add("room_user")
         let new_p = document.createElement("p")

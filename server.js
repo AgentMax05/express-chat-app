@@ -15,7 +15,6 @@ app.use(helmet())
 const server = http.createServer(app)
 const io = socketio(server)
 
-let users;
 let active_users = []
 let expected_logins = []
 let database;
@@ -40,14 +39,7 @@ mongo.connect(mongo_url, {useNewUrlParser: true, useUnifiedTopology: true}, asyn
     rooms_collection = database.collection("rooms")
     await rooms_collection.updateMany({}, { $set: {online_users: []}})
     await users_collection.updateMany({}, {$set: {status: false}})
-    await users_collection.find().toArray((error, items) => {
-        if (error) {
-            console.error(error)
-            return
-        }
-        users = items
-        console.log("users received from database")
-    })
+    console.log("users received from database")
 
     // CHANGE GENERAL ROOM TO SEARCH FOR _ID OF GENERAL ROOM HERE
 
@@ -344,10 +336,7 @@ async function send_room_messages(user_id, room_id) {
 function log_in_user(user, id) {
 
     if (user.status === false && in_expected_logins(user)) {
-        user.status = true
-        user.current_id = id
-        active_users.push(user)
-        users_collection.updateOne({username: user.username}, {$set : {current_id: user.current_id, current_room: {room_name: "general", room_id: general_id}, status: true}})
+        users_collection.updateOne({username: user.username}, {$set : {current_id: id, current_room: {room_name: "general", room_id: general_id}, status: true}})
         return true
     }
     else {
@@ -508,7 +497,6 @@ async function check_signup(username) {
 
 async function add_user(data) {
     let new_user = {username: data.username, password: data.password, status: false, current_id: null, rooms: [{room_name: "general", room_id: general_id}], current_room: null}
-    users.push(new_user)
     users_collection.insertOne(new_user)
     console.log(`New user created: [username: ${new_user.username}, password: ${new_user.password}]`)
     rooms_collection.updateOne({_id: ObjectID(general_id)}, {$addToSet: {users: new_user.username}})
