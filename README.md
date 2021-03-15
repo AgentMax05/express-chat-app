@@ -1,6 +1,6 @@
 <h1 align="center">Express Chat App</h1>
 
-<p align="center>
+<p align="center">
   <a href="https://github.com/AgentMax05">
     <img src="https://img.shields.io/badge/created%20by-AgentMax05-orange" /></a>
   <a href="https://maxvek.com/chat">
