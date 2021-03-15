@@ -1,6 +1,20 @@
 <h1 align="center">Express Chat App</h1>
 
-[![creator](https://img.shields.io/badge/created%20by-AgentMax05-orange)](https://github.com/AgentMax05) [![hosted](https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow)](https://maxvek.com/chat) ![file count](https://img.shields.io/github/directory-file-count/AgentMax05/express-chat-app) ![repo size](https://img.shields.io/github/repo-size/AgentMax05/express-chat-app) ![website status](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fmaxvek.com%2Fchat) ![last commit](https://img.shields.io/github/last-commit/AgentMax05/express-chat-app)
+<p align="center>
+  <a href="https://github.com/AgentMax05">
+    <img src="https://img.shields.io/badge/created%20by-AgentMax05-orange" /></a>
+  <a href="https://maxvek.com/chat">
+    <img src="https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow" /></a>
+  <a href="https://github.com/AgentMax05/express-chat-app">
+    <img src="https://img.shields.io/github/directory-file-count/AgentMax05/express-chat-app" /></a>
+  <a href="https://maxvek.com/chat">
+    <img src="https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fmaxvek.com%2Fchat" /></a>
+  <a href="https://github.com/AgentMax05/express-chat-app" />
+    <img src="https://img.shields.io/github/last-commit/AgentMax05/express-chat-app" /></a>
+</p>
+ 
+previous: "[![creator](https://img.shields.io/badge/created%20by-AgentMax05-orange)](https://github.com/AgentMax05) [![hosted](https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow)](https://maxvek.com/chat) ![file count](https://img.shields.io/github/directory-file-count/AgentMax05/express-chat-app) ![repo size](https://img.shields.io/github/repo-size/AgentMax05/express-chat-app) ![website status](https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fmaxvek.com%2Fchat) ![last commit](https://img.shields.io/github/last-commit/AgentMax05/express-chat-app)"
+        
   
   
 This is a chat app I've been working on for a while. It uses express and node.js for the backend, MongoDB for storage, and socket.io for communicating between the server and the user. Currently the chat app is hosted on https://maxvek.com/chat. To access the chat you need to make an account by signing up with a username and password at https://maxvek.com/chat/sign-up.html, and then you can log in and chat with other people!
