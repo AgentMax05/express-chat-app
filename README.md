@@ -1,8 +1,8 @@
 <h1 align="center">Express Chat App</h1>
 
-![creator](https://img.shields.io/badge/Created%20By-AgentMax05-orange)(https://github.com/AgentMax05)
+[![creator](https://img.shields.io/badge/Created%20By-AgentMax05-orange)](https://github.com/AgentMax05)
   
-![hosted](https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow)(https://maxvek.com/chat)
+[![hosted](https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow)](https://maxvek.com/chat)
   
   
 This is a chat app I've been working on for a while. It uses express and node.js for the backend, MongoDB for storage, and socket.io for communicating between the server and the user. Currently the chat app is hosted on https://maxvek.com/chat. To access the chat you need to make an account by signing up with a username and password at https://maxvek.com/chat/sign-up.html, and then you can log in and chat with other people!
