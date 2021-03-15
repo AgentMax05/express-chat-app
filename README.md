@@ -6,7 +6,7 @@
   <a href="https://maxvek.com/chat">
     <img src="https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow" /></a>
   <a href="https://github.com/AgentMax05/express-chat-app">
-    <img src="https://img.shields.io/github/directory-file-count/AgentMax05/express-chat-app" /></a>
+    <img src="https://img.shields.io/tokei/lines/github/AgentMax05/express-chat-app?label=total%20lines%20of%20code" /></a>
   <a href="https://github.com/AgentMax05/express-chat-app">
     <img src="https://img.shields.io/github/repo-size/AgentMax05/express-chat-app" /></a>
   <a href="https://maxvek.com/chat">
