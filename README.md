@@ -3,7 +3,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/made%20by-AgentMax05-orange">
   
-  <img src="https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow">
+  <a href="https://maxvek.com/chat"><img src="https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow"></a>
  </p>
 This is a chat app I've been working on for a while. It uses express and node.js for the backend, MongoDB for storage, and socket.io for communicating between the server and the user. Currently the chat app is hosted on https://maxvek.com/chat. To access the chat you need to make an account by signing up with a username and password at https://maxvek.com/chat/sign-up.html, and then you can log in and chat with other people!
 
