@@ -594,6 +594,10 @@ async function add_user_into_room(username, room_name, room_id) {
 }
 
 async function delete_room(room_id, room_name) {
+    if (room_id == general_id) {
+        console.log(`tried to delete general room`)
+        return
+    }
     console.log(`deleting room: ${room_name}`)
 
     let found_room = await rooms_collection.findOne({_id: ObjectID(room_id)})
