@@ -526,6 +526,8 @@ async function add_user(data) {
 
 async function create_room(room_name, room_users) {
 
+    if (room_name === "general") return;
+
     let real_users = []
 
     for (let i = 0; i < room_users.length; i++) {
