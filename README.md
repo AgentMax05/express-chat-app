@@ -5,12 +5,12 @@
     <img src="https://img.shields.io/badge/created%20by-AgentMax05-orange" /></a>
   <a href="https://maxvek.com/chat">
     <img src="https://img.shields.io/badge/hosted%20on-maxvek.com%2Fchat-yellow" /></a>
+  <a href="https://maxvek.com/chat">
+    <img src="https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fmaxvek.com%2Fchat" /></a>
   <a href="https://github.com/AgentMax05/express-chat-app">
     <img src="https://img.shields.io/tokei/lines/github/AgentMax05/express-chat-app?label=total%20lines%20of%20code" /></a>
   <a href="https://github.com/AgentMax05/express-chat-app">
     <img src="https://img.shields.io/github/repo-size/AgentMax05/express-chat-app" /></a>
-  <a href="https://maxvek.com/chat">
-    <img src="https://img.shields.io/website?down_color=red&down_message=offline&up_color=green&up_message=online&url=https%3A%2F%2Fmaxvek.com%2Fchat" /></a>
   <a href="https://github.com/AgentMax05/express-chat-app" />
     <img src="https://img.shields.io/github/last-commit/AgentMax05/express-chat-app" /></a>
 </p>
