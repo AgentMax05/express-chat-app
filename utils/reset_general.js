@@ -2,7 +2,7 @@ const mongo = require("mongodb").MongoClient
 
 mongo.connect("mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTopology: true}, async (err, client) => {
     if (err) {
-        console.error(error)
+        console.error(err)
         return
     }
     let database = client.db("chat-app")
