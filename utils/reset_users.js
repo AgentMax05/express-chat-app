@@ -19,7 +19,7 @@ mongo.connect("mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTop
 
         user = users[i];
 
-        let userGeneralRooms = user.rooms.find(x => x.room_name === "general");
+        let userGeneralRooms = user.rooms.filter(x => x.room_name === "general");
 
         if (userGeneralRooms.length > 1) {
             for (let j = 1; j < userGeneralRooms.length; j++) {
