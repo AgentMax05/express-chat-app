@@ -589,6 +589,8 @@ body {
 }
 
 .room_user p {
+    overflow-x: hidden;
+    text-overflow: ellipsis;
     grid-row: 1;
     grid-column: 1;
 }
@@ -596,12 +598,13 @@ body {
 .room_user .indicator {
     grid-row: 1;
     grid-column: 2;
-    margin-right: 10px;
+    /* margin-right: 10px; */
     width: 10px;
     height: 10px;
     background-color: red;
     border-radius: 100%;
     align-self: center;
+    margin: 0 auto;
 }
 
 #room_info {

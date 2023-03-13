@@ -398,6 +398,7 @@ function set_info_room_users(users) {
         // console.log(`adding div for ${user}`)
         let new_div = document.createElement("div")
         new_div.classList.add("room_user")
+        new_div.setAttribute("title", user);
         let new_p = document.createElement("p")
         new_p.innerText = user
         new_div.appendChild(new_p)
