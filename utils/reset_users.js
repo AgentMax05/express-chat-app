@@ -26,7 +26,9 @@ mongo.connect("mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTop
                 user.rooms.splice(user.rooms.indexOf(userGeneralRooms[j]), 1);
             }
         } else if (userGeneralRooms.length === 0) {
-            let result = await database.collection("users").updateOne({username: users[i].username}, {$push: {rooms: {room_name: "general", room_id: ObjectID(general_room._id)}}});
+            // let result = await database.collection("users").updateOne({username: users[i].username}, {$push: {rooms: {room_name: "general", room_id: ObjectID(general_room._id)}}});
+            let newRoom = {room_name: "general", room_id: ObjectID(general_room._id)};
+            user.rooms.push(newRoom);
             console.log(`added ${user.username} to general room`);
             // console.log(result);
         }
@@ -35,10 +37,12 @@ mongo.connect("mongodb://localhost:27017", {useNewUrlParser: true, useUnifiedTop
         let indexOfGeneral = user.rooms.findIndex(x => x.room_name === "general");
         user.rooms.splice(0, 0, user.rooms[indexOfGeneral]);
         user.rooms.splice(indexOfGeneral+1, 1);
+
+        let result = await database.collection("users").updateOne({username: user.username}, {$set: {rooms: user.rooms}});
     }
     
     let updateResult = await database.collection("rooms").updateOne({name: "general"}, {$set: {users: general_users}});
-    console.log(updateResult);
+    // console.log(updateResult);
 
 
     // let general_room = {name: "general", display_name: "general", users: general_users, online_users: []}
